@@ -142,14 +142,14 @@ async function start(): Promise<void> {
         const preventRedirect = fragparts.params.client_secret || fragparts.location.length > 0;
 
         if (!preventRedirect) {
-            const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            const isAndroid = /Android/.test(navigator.userAgent);
-            if (isIos || isAndroid) {
-                if (document.cookie.indexOf("element_mobile_redirect_to_guide=false") === -1) {
-                    window.location.href = "mobile_guide/";
-                    return;
-                }
-            }
+            // const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            // const isAndroid = /Android/.test(navigator.userAgent);
+            // if (isIos || isAndroid) {
+            //     if (document.cookie.indexOf("element_mobile_redirect_to_guide=false") === -1) {
+            //         window.location.href = "mobile_guide/";
+            //         return;
+            //     }
+            // }
         }
 
         // set the platform for react sdk

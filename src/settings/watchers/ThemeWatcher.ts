@@ -95,7 +95,7 @@ export default class ThemeWatcher extends TypedEventEmitter<ThemeWatcherEvent, T
         // controller that honours the same flag, although probably better would be to
         // have the theme logic in one place rather than split between however many
         // different places.
-        if (ThemeController.isLogin) return "light";
+        // if (ThemeController.isLogin) return "light";
 
         // If the user has specifically enabled the system matching option (excluding default),
         // then use that over anything else. We pick the lowest possible level for the setting

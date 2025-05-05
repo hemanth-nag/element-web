@@ -823,7 +823,7 @@ export default class Notifications extends React.PureComponent<EmptyObject, ISta
 
         const rows = this.state.pushers?.map((p) => (
             <tr key={p.kind + p.pushkey}>
-                <td>{p.app_display_name}</td>
+                {/* <td>{p.app_display_name}</td> */}
                 <td>{p.device_display_name}</td>
             </tr>
         ));

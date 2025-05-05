@@ -545,7 +545,7 @@ export default class AppTile extends React.Component<IProps, IState> {
     };
 
     private formatAppTileName(): string {
-        let appTileName = "No name";
+        let appTileName = "Unknown";
         if (this.props.app.name && this.props.app.name.trim()) {
             appTileName = this.props.app.name.trim();
         }

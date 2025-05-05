@@ -753,7 +753,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                     break;
 
                 case EventShieldReason.SENT_IN_CLEAR:
-                    shieldReasonMessage = _t("common|unencrypted");
+                    shieldReasonMessage = ""; //_t("common|unencrypted") unencrypted___;
                     break;
 
                 case EventShieldReason.VERIFICATION_VIOLATION:
@@ -794,7 +794,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
             }
             if (!ev.isEncrypted()) {
                 // if the event is not encrypted, but it's an e2e room, show a warning
-                return <E2ePadlockUnencrypted />;
+                return  null; // <E2ePadlockUnencrypted /> unencrypted____;
             }
         }
 
@@ -1490,9 +1490,9 @@ const SafeEventTile = (props: EventTileProps): JSX.Element => {
 };
 export default SafeEventTile;
 
-function E2ePadlockUnencrypted(props: Omit<IE2ePadlockProps, "title" | "icon">): JSX.Element {
-    return <E2ePadlock title={_t("common|unencrypted")} icon={E2ePadlockIcon.Warning} {...props} />;
-}
+// function E2ePadlockUnencrypted(props: Omit<IE2ePadlockProps, "title" | "icon">): JSX.Element {
+//     return <E2ePadlock title={_t("common|unencrypted")} icon={E2ePadlockIcon.Warning} {...props} />;
+// }
 
 function E2ePadlockDecryptionFailure(props: Omit<IE2ePadlockProps, "title" | "icon">): JSX.Element {
     return (

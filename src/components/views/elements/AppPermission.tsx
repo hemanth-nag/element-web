@@ -127,7 +127,7 @@ export default class AppPermission extends React.Component<IProps, IState> {
                   { helpIcon: () => warningTooltip },
               );
 
-        const encryptionWarning = this.props.isRoomEncrypted ? _t("widget|unencrypted_warning") : null;
+        const encryptionWarning = this.props.isRoomEncrypted ? "" /* _t("widget|unencrypted_warning") unencrypted____ */ : null;
 
         return (
             <div className="mx_AppPermission">

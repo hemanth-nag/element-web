@@ -190,7 +190,7 @@ export default class VoiceUserSettingsTab extends React.Component<EmptyObject, I
                     </SettingsSubsection>
                 </SettingsSection>
 
-                <SettingsSection heading={_t("common|advanced")}>
+                {/* <SettingsSection heading={_t("common|advanced")}>
                     <SettingsSubsection heading={_t("settings|voip|voice_processing")}>
                         <LabelledToggleSwitch
                             value={this.state.audioNoiseSuppression}
@@ -226,7 +226,7 @@ export default class VoiceUserSettingsTab extends React.Component<EmptyObject, I
                             hideIfCannotSet
                         />
                     </SettingsSubsection>
-                </SettingsSection>
+                </SettingsSection> */}
             </SettingsTab>
         );
     }

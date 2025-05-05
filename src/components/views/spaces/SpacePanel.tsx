@@ -428,11 +428,13 @@ const SpacePanel: React.FC = () => {
                                     {provided.placeholder}
                                 </InnerSpacePanel>
                             )}
-                        </Droppable>
+                        </Droppable>    
 
                         <ThreadsActivityCentre displayButtonLabel={!isPanelCollapsed} />
 
                         <QuickSettingsButton isPanelCollapsed={isPanelCollapsed} />
+
+                        <img className="mx_SpacePanel_footer" src="themes/element/img/icp-logo-dark.png" width="45px" ></img>
                     </nav>
                 </DragDropContext>
             )}

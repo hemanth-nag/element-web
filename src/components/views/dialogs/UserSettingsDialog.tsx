@@ -201,15 +201,15 @@ export default function UserSettingsDialog(props: IProps): JSX.Element {
             );
         }
 
-        tabs.push(
-            new Tab(
-                UserTab.Security,
-                _td("room_settings|security|title"),
-                <LockIcon />,
-                <SecurityUserSettingsTab closeSettingsFn={props.onFinished} />,
-                "UserSettingsSecurityPrivacy",
-            ),
-        );
+        // tabs.push(
+        //     new Tab(
+        //         UserTab.Security,
+        //         _td("room_settings|security|title"),
+        //         <LockIcon />,
+        //         <SecurityUserSettingsTab closeSettingsFn={props.onFinished} />,
+        //         "UserSettingsSecurityPrivacy",
+        //     ),
+        // );
 
         tabs.push(
             new Tab(
@@ -222,31 +222,31 @@ export default function UserSettingsDialog(props: IProps): JSX.Element {
             ),
         );
 
-        if (showLabsFlags() || SettingsStore.getFeatureSettingNames().some((k) => SettingsStore.getBetaInfo(k))) {
-            tabs.push(
-                new Tab(UserTab.Labs, _td("common|labs"), <LabsIcon />, <LabsUserSettingsTab />, "UserSettingsLabs"),
-            );
-        }
-        if (mjolnirEnabled) {
-            tabs.push(
-                new Tab(
-                    UserTab.Mjolnir,
-                    _td("labs_mjolnir|title"),
-                    <BlockIcon />,
-                    <MjolnirUserSettingsTab />,
-                    "UserSettingMjolnir",
-                ),
-            );
-        }
-        tabs.push(
-            new Tab(
-                UserTab.Help,
-                _td("setting|help_about|title"),
-                <HelpIcon />,
-                <HelpUserSettingsTab />,
-                "UserSettingsHelpAbout",
-            ),
-        );
+        // if (showLabsFlags() || SettingsStore.getFeatureSettingNames().some((k) => SettingsStore.getBetaInfo(k))) {
+        //     tabs.push(
+        //         new Tab(UserTab.Labs, _td("common|labs"), <LabsIcon />, <LabsUserSettingsTab />, "UserSettingsLabs"),
+        //     );
+        // }
+        // if (mjolnirEnabled) {
+        //     tabs.push(
+        //         new Tab(
+        //             UserTab.Mjolnir,
+        //             _td("labs_mjolnir|title"),
+        //             <BlockIcon />,
+        //             <MjolnirUserSettingsTab />,
+        //             "UserSettingMjolnir",
+        //         ),
+        //     );
+        // }
+        // tabs.push(
+        //     new Tab(
+        //         UserTab.Help,
+        //         _td("setting|help_about|title"),
+        //         <HelpIcon />,
+        //         <HelpUserSettingsTab />,
+        //         "UserSettingsHelpAbout",
+        //     ),
+        // );
 
         return tabs as NonEmptyArray<Tab<UserTab>>;
     };

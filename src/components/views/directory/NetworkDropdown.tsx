@@ -230,11 +230,11 @@ export const NetworkDropdown: React.FC<IProps> = ({ protocols, config, setConfig
                         }
                     }}
                 >
-                    <div className="mx_GenericDropdownMenu_Option--label">
+                    {/* <div className="mx_GenericDropdownMenu_Option--label">
                         <span className="mx_NetworkDropdown_addServer">
                             {_t("spotlight|public_rooms|network_dropdown_add_server_option")}
                         </span>
-                    </div>
+                    </div> */}
                 </MenuItemRadio>
             </>
         ),
