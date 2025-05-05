@@ -70,7 +70,7 @@ const LanguageSection: React.FC = () => {
     return (
         <div className="mx_SettingsSubsection_dropdown">
             {_t("settings|general|application_language")}
-            <LanguageDropdown onOptionChange={onLanguageChange} value={language} />
+            <LanguageDropdown onOptionChange={onLanguageChange} value={language} disabled />
             <div className="mx_PreferencesUserSettingsTab_section_hint">
                 {_t("settings|general|application_language_reload_hint")}
             </div>
@@ -367,7 +367,7 @@ export default class PreferencesUserSettingsTab extends React.Component<IProps, 
                         {this.renderGroup(PreferencesUserSettingsTab.ROOM_DIRECTORY_SETTINGS)}
                     </SettingsSubsection>
 
-                    <SettingsSubsection heading={_t("common|general")} stretchContent formWrap>
+                    {/* <SettingsSubsection heading={_t("common|general")} stretchContent formWrap>
                         {this.renderGroup(PreferencesUserSettingsTab.GENERAL_SETTINGS)}
 
                         <SettingsFlag name="Electron.showTrayIcon" level={SettingLevel.PLATFORM} hideIfCannotSet />
@@ -406,7 +406,7 @@ export default class PreferencesUserSettingsTab extends React.Component<IProps, 
                             value={this.state.readMarkerOutOfViewThresholdMs}
                             onChange={this.onReadMarkerOutOfViewThresholdMs}
                         />
-                    </SettingsSubsection>
+                    </SettingsSubsection> */}
                 </SettingsSection>
             </SettingsTab>
         );

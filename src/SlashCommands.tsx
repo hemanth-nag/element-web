@@ -651,7 +651,7 @@ export const Commands = [
                 if (jitsiData) {
                     logger.log("Making /addwidget widget a Jitsi conference");
                     type = WidgetType.JITSI;
-                    name = "Jitsi";
+                    name = "Video Conference";
                     data = jitsiData;
                     widgetUrl = WidgetUtils.getLocalJitsiWrapperUrl();
                 }

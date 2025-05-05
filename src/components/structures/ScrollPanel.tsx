@@ -183,6 +183,7 @@ export default class ScrollPanel extends React.Component<IProps> {
     private minListHeight!: number;
     private heightUpdateInProgress = false;
     public divScroll: HTMLDivElement | null = null;
+    private isAddedWatermark = false;
 
     public static contextType = SDKContext;
     declare public context: React.ContextType<typeof SDKContext>;
@@ -197,6 +198,7 @@ export default class ScrollPanel extends React.Component<IProps> {
         this.unmounted = false;
         this.context?.resizeNotifier?.on("middlePanelResizedNoisy", this.onResize);
         this.checkScroll();
+        this.addUserWatermark();
     }
 
     public componentDidUpdate(): void {
@@ -220,6 +222,85 @@ export default class ScrollPanel extends React.Component<IProps> {
 
         this.divScroll = null;
     }
+
+    private addUserWatermark = (): void => {
+        if (this.isAddedWatermark) return;
+        try {
+            const encodeMap: { [key: string]: string } = {
+                a: '1', b: '2', c: '3', d: '4', e: '5',
+                f: '6', g: '7', h: '8', i: '9', j: 'A',
+                k: 'B', l: 'C', m: 'D', n: 'E', o: 'F',
+                p: 'G', q: 'H', r: 'I', s: 'J', t: 'K',
+                u: 'L', v: 'M', w: 'N', x: 'O', y: 'P',
+                z: 'Q', ' ': '_'
+            };
+        
+            // Custom Encode
+            function customEncode(input: string): string {
+                const date = new Date();
+                const currentDate = date.getDate().toString().padStart(2, '0');
+                const currentMonth = (date.getMonth() + 1).toString().padStart(2, '0');
+        
+                const encodedText = input
+                    .toLowerCase()
+                    .split('')
+                    .map(char => encodeMap[char] || char)
+                    .join('');
+        
+                return `${currentDate}${encodedText}${currentMonth}`;
+            }
+        
+            // Add watermark to a single container
+            const addWatermarkToContainer = (container: HTMLElement, backgroundText: HTMLElement): void => {
+                // Clear any existing background lines
+                backgroundText.innerHTML = '';
+        
+                // Calculate the total height required to cover the content
+                const height = container.scrollHeight;
+        
+                const userId = localStorage.getItem('mx_user_id')?.split(':')[0]?.replace('@', '') || 'USER-ID';
+                const textLine = `${customEncode(userId)}          `.repeat(70); // Create one line of repeated text
+        
+                const lineHeight = 30; // Line height in px
+                const linesNeeded = Math.ceil(height / lineHeight);
+        
+                for (let i = 0; i < linesNeeded; i++) {
+                    const lineDiv = document.createElement('div');
+                    lineDiv.className = 'background-line';
+                    lineDiv.textContent = textLine;
+                    lineDiv.style.top = `${i * lineHeight}px`; // Position each line
+                    lineDiv.style.fontSize = '10px'; // Set font size
+                    backgroundText.appendChild(lineDiv);
+                }
+        
+                // Adjust the height of the background to match the container content
+                backgroundText.style.height = `${height}px`;
+            };
+        
+            // Get all containers and background-text elements
+            const containers: NodeListOf<HTMLElement> = document.querySelectorAll('.mx_RoomView_MessageList');
+            const backgroundTexts: NodeListOf<HTMLElement> = document.querySelectorAll('.background-text');
+        
+            containers.forEach((container, index) => {
+                const backgroundText = backgroundTexts[index];
+                if (!backgroundText) return;
+        
+                // Add watermark initially
+                addWatermarkToContainer(container, backgroundText);
+        
+                // Observe height changes
+                const resizeObserver = new ResizeObserver(() => {
+                    addWatermarkToContainer(container, backgroundText);
+                });
+        
+                resizeObserver.observe(container);
+            });
+        } catch (e) {
+            debuglog("isFilling: setting", e);
+        }
+        
+        this.isAddedWatermark = true;
+    };
 
     private onScroll = (ev: Event): void => {
         // skip scroll events caused by resizing
@@ -944,6 +1025,7 @@ export default class ScrollPanel extends React.Component<IProps> {
                 style={this.props.style}
             >
                 {this.props.fixedChildren}
+                <div className="background-text"></div>
                 <div className="mx_RoomView_messageListWrapper">
                     <ol ref={this.itemlist} className="mx_RoomView_MessageList" aria-live="polite">
                         {this.props.children}

@@ -180,12 +180,12 @@ const RoomSummaryCardView: React.FC<IProps> = ({
                     </Badge>
                 )}
 
-                {!vm.isRoomEncrypted && (
-                    <Badge kind="blue">
-                        <LockOffIcon width="1em" color="var(--cpd-color-icon-info-primary)" />
+                {/* {!e2eStatus && (
+                    <Badge kind="grey">
+                        <LockOffIcon width="1em" />
                         {_t("common|unencrypted")}
                     </Badge>
-                )}
+                )} unencrypted____  */}
 
                 {vm.e2eStatus === E2EStatus.Warning && (
                     <Badge kind="red">
@@ -282,11 +282,16 @@ const RoomSummaryCardView: React.FC<IProps> = ({
                             label={_t("right_panel|polls_button")}
                             onSelect={vm.onRoomPollHistoryClick}
                         />
-                        <MenuItem
+                        {/* <MenuItem
                             Icon={ExportArchiveIcon}
                             label={_t("export_chat|title")}
+<<<<<<< HEAD:src/components/views/right_panel/RoomSummaryCardView.tsx
                             onSelect={vm.onRoomExportClick}
                         />
+=======
+                            onSelect={onRoomExportClick}
+                        /> */}
+>>>>>>> 0f2141da1a (ICCAAA Updates):src/components/views/right_panel/RoomSummaryCard.tsx
                     </>
                 )}
 

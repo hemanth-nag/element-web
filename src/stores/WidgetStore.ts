@@ -18,6 +18,8 @@ import ActiveWidgetStore from "../stores/ActiveWidgetStore";
 import WidgetUtils from "../utils/WidgetUtils";
 import { UPDATE_EVENT } from "./AsyncStore";
 import { type IApp } from "../utils/WidgetUtils-types";
+import { WidgetType } from "../widgets/WidgetType";
+import { _t } from "../languageHandler";
 
 export type { IApp };
 
@@ -131,6 +133,10 @@ export default class WidgetStore extends AsyncStoreWithClient<EmptyObject> {
                     `Possible widget ID conflict for ${app.id} - wants to store in room ${app.roomId} ` +
                         `but is currently stored as ${existingApp.roomId} - letting the want win`,
                 );
+            }
+
+            if (app.type === WidgetType.JITSI.legacy) {
+                app.name = _t("widget|conference");
             }
 
             this.widgetMap.set(WidgetUtils.getWidgetUid(app), app);

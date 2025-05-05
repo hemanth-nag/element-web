@@ -64,6 +64,7 @@ const UserWelcomeTop: React.FC = () => {
 
     return (
         <div>
+            <img src="https://icp.gov.ae/wp-content/uploads/2024/01/cropped-logo-2021.png" className="mx_HomePageImage" alt="ICP Logo" />
             <MiniAvatarUploader
                 hasAvatar={!!ownProfile.avatarUrl}
                 hasAvatarLabel={_t("onboarding|has_avatar_label")}

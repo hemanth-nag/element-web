@@ -187,23 +187,27 @@ export default class EventIndexPanel extends React.Component<EmptyObject, IState
                 </SettingsSubsectionText>
             );
         } else if (!EventIndexPeg.platformHasSupport()) {
-            eventIndexingSettings = (
-                <SettingsSubsectionText>
-                    {_t(
-                        "settings|security|message_search_unsupported_web",
-                        {
-                            brand,
-                        },
-                        {
-                            desktopLink: (sub) => (
-                                <ExternalLink href={desktopBuilds.url} target="_blank" rel="noreferrer noopener">
-                                    {sub}
-                                </ExternalLink>
-                            ),
-                        },
-                    )}
-                </SettingsSubsectionText>
-            );
+            // eventIndexingSettings = (
+            //     <SettingsSubsectionText>
+            //         {_t(
+            //             "settings|security|message_search_unsupported_web",
+            //             {
+            //                 brand,
+            //             },
+            //             {
+            //                 desktopLink: (sub) => (
+            //                     <ExternalLink
+            //                         href="https://element.io/get-started"
+            //                         target="_blank"
+            //                         rel="noreferrer noopener"
+            //                     >
+            //                         {sub}
+            //                     </ExternalLink>
+            //                 ),
+            //             },
+            //         )}
+            //     </SettingsSubsectionText>
+            // );
         } else {
             eventIndexingSettings = (
                 <>

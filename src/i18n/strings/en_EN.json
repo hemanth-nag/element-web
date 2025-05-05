@@ -665,7 +665,7 @@
         "stop_voice_message": "Stop recording",
         "voice_message_button": "Voice Message"
     },
-    "console_dev_note": "If you know what you're doing, Element is open-source, be sure to check out our GitHub (https://github.com/vector-im/element-web/) and contribute!",
+    "console_dev_note": "If you know what you're doing, Message App is open-source, be sure to check out our GitHub () and contribute!",
     "console_scam_warning": "If someone told you to copy/paste something here, there is a high likelihood you're being scammed!",
     "console_wait": "Wait!",
     "create_room": {
@@ -879,7 +879,7 @@
         "setting_definition": "Setting definition:",
         "setting_id": "Setting ID",
         "settings": {
-            "elementCallUrl": "Element Call URL"
+            "elementCallUrl": "Message App Call URL"
         },
         "settings_explorer": "Settings explorer",
         "show_empty_content_events": "Show events with empty content",
@@ -1136,11 +1136,11 @@
         "hs_blocked": "This homeserver has been blocked by its administrator.",
         "invalid_configuration_mixed_server": "Invalid configuration: a default_hs_url can't be specified along with default_server_name or default_server_config",
         "invalid_configuration_no_server": "Invalid configuration: no default server specified.",
-        "invalid_json": "Your Element configuration contains invalid JSON. Please correct the problem and reload the page.",
+        "invalid_json": "Your Message App configuration contains invalid JSON. Please correct the problem and reload the page.",
         "invalid_json_detail": "The message from the parser is: %(message)s",
         "invalid_json_generic": "Invalid JSON",
         "mau": "This homeserver has hit its Monthly Active User limit.",
-        "misconfigured": "Your Element is misconfigured",
+        "misconfigured": "Your Message App is misconfigured",
         "mixed_content": "Can't connect to homeserver via HTTP when an HTTPS URL is in your browser bar. Either use HTTPS or <a>enable unsafe scripts</a>.",
         "non_urgent_echo_failure_toast": "Your server isn't responding to some <a>requests</a>.",
         "resource_limits": "This homeserver has exceeded one of its resource limits.",
@@ -1527,7 +1527,7 @@
         "custom_themes": "Support adding custom themes",
         "dynamic_room_predecessors": "Dynamic room predecessors",
         "dynamic_room_predecessors_description": "Enable MSC3946 (to support late-arriving room archives)",
-        "element_call_video_rooms": "Element Call video rooms",
+        "element_call_video_rooms": "Message App Call video rooms",
         "encrypted_state_events": "Encrypted state events (MSC4362)",
         "encrypted_state_events_description": "Enables experimental support for encrypting state events, which hides metadata such as room names and topics from the server. This metadata will also be hidden from people joining rooms later, and people whose clients do not support MSC4362.",
         "exclude_insecure_devices": "Exclude insecure devices when sending/receiving messages",
@@ -1535,7 +1535,7 @@
         "experimental_description": "Feeling experimental? Try out our latest ideas in development. These features are not finalised; they may be unstable, may change, or may be dropped altogether. <a>Learn more</a>.",
         "experimental_section": "Early previews",
         "extended_profiles_msc_support": "Requires your server to support MSC4133",
-        "feature_disable_call_per_sender_encryption": "Disable per-sender encryption for Element Call",
+        "feature_disable_call_per_sender_encryption": "Disable per-sender encryption for Message App Call",
         "feature_wysiwyg_composer_description": "Use rich text instead of Markdown in the message composer.",
         "group_calls": "New group call experience",
         "group_developer": "Developer",
@@ -1822,8 +1822,8 @@
         "moderator": "Moderator",
         "restricted": "Restricted"
     },
-    "powered_by_matrix": "Powered by Matrix",
-    "powered_by_matrix_with_logo": "Decentralised, encrypted chat &amp; collaboration powered by $matrixLogo",
+    "powered_by_matrix": "Powered by Matrix Protocol",
+    "powered_by_matrix_with_logo": "Decentralised, encrypted chat &amp;",
     "presence": {
         "away": "Away",
         "busy": "Busy",
@@ -4035,7 +4035,7 @@
         "disabled_no_perms_start_video_call": "You do not have permission to start video calls",
         "disabled_no_perms_start_voice_call": "You do not have permission to start voice calls",
         "disabled_ongoing_call": "Ongoing call",
-        "element_call": "Element Call",
+        "element_call": "Message App Call",
         "enable_camera": "Turn on camera",
         "enable_microphone": "Unmute microphone",
         "expand": "Return to call",
@@ -4107,8 +4107,9 @@
         "you_are_presenting": "You are presenting"
     },
     "web_default_device_name": "%(appName)s: %(browserName)s on %(osName)s",
-    "welcome_to_element": "Welcome to Element",
+    "welcome_to_element": "Welcome to Message App",
     "widget": {
+        "conference": "Conference Call",
         "added_by": "Widget added by",
         "capabilities_dialog": {
             "content_starting_text": "This widget would like to:",

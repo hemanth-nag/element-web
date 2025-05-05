@@ -371,3 +371,23 @@ body {
 }
 
 /* ******************** */
+
+.background-text {
+    position: absolute;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; /* Dynamically updated with JS */
+    pointer-events: none; /* Non-interactive */
+    z-index: 0; /* Stay behind the content */
+}
+.background-line {
+    position: absolute;
+    left: 0;
+    width: 100%; /* Full width for repeated text */
+    font-size: 18px; /* Font size for watermark */
+    color: var(--cpd-color-bg-action-secondary-pressed, rgba(0, 0, 0, 0.1)); /* Adaptable text color */
+    white-space: nowrap; /* Prevent text wrapping */
+    transform-origin:  center; /* Anchor rotation to the left-center */
+}

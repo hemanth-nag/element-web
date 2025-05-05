@@ -267,7 +267,7 @@ const NewRoomIntro: React.FC = () => {
         });
     }
 
-    const subText = _t("room|intro|private_unencrypted_warning");
+    // const subText = _t("room|intro|private_unencrypted_warning");
 
     let subButton: JSX.Element | undefined;
     if (
@@ -281,23 +281,23 @@ const NewRoomIntro: React.FC = () => {
         );
     }
 
-    const subtitle = (
-        <span>
-            {" "}
-            {subText} {subButton}{" "}
-        </span>
-    );
+    // const subtitle = (
+    //     <span>
+    //         {" "}
+    //         {subText} {subButton}{" "}
+    //     </span>
+    // );
 
     return (
         <li className="mx_NewRoomIntro">
-            {!hasExpectedEncryptionSettings(cli, room) && (
+            {/* {!hasExpectedEncryptionSettings(cli, room) && (
                 <EventTileBubble
                     icon={<ErrorSolidIcon color="var(--cpd-color-icon-critical-primary)" />}
                     className="mx_cryptoEvent"
                     title={_t("room|intro|unencrypted_warning")}
                     subtitle={subtitle}
                 />
-            )}
+            )} */}
 
             {body}
         </li>

@@ -230,7 +230,7 @@ export const NetworkDropdown: React.FC<IProps> = ({ protocols, config, setConfig
                                 roomServer: newServer!,
                             });
                         }
-                    }}
+                        }}
                     isSelected={false}
                     label={_t("spotlight|public_rooms|network_dropdown_add_server_option")}
                 />

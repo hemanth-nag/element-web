@@ -209,7 +209,13 @@ export default class UserMenu extends React.Component<IProps, IState> {
         // Disable system theme matching if the user hits this button
         SettingsStore.setValue("use_system_theme", null, SettingLevel.DEVICE, false);
 
-        let newTheme = this.state.isDarkTheme ? "light" : "dark";
+        let customNewTheme = "";
+        let customThemes = SettingsStore.getValue("custom_themes");
+        if (customThemes && customThemes.length > 0) {
+            customNewTheme = `custom-${customThemes[0].name}`;
+        }
+
+        let newTheme = this.state.isDarkTheme ? customNewTheme ? customNewTheme : "light" : "dark";
         if (this.state.isHighContrast) {
             const hcTheme = findHighContrastTheme(newTheme);
             if (hcTheme) {
@@ -335,7 +341,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
         let primaryOptionList = (
             <IconizedContextMenuOptionList>
                 {homeButton}
-                {linkNewDeviceButton}
+                {/* {linkNewDeviceButton} */}
                 <IconizedContextMenuOption
                     icon={<NotificationsIcon />}
                     label={_t("notifications|enable_prompt_toast_title")}

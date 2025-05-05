@@ -382,7 +382,7 @@ export type StringSettingKey = Assignable<Settings, IBaseSetting<string>>;
 
 export const SETTINGS: Settings = {
     "feature_video_rooms": {
-        isFeature: true,
+        // isFeature: true,
         labsGroup: LabGroup.VoiceAndVideo,
         displayName: _td("labs|video_rooms"),
         supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS_WITH_CONFIG,
@@ -422,7 +422,7 @@ export const SETTINGS: Settings = {
         },
     },
     [Features.NotificationSettings2]: {
-        isFeature: true,
+        // isFeature: true,
         labsGroup: LabGroup.Experimental,
         supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS_WITH_CONFIG,
         displayName: _td("labs|notification_settings"),

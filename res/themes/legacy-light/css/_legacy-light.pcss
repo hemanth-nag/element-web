@@ -10,9 +10,8 @@
 /* Noto Color Emoji contains digits, in fixed-width, therefore causing
    digits in flowed text to stand out.
    TODO: Consider putting all emoji fonts to the end rather than the front. */
-$font-family:
-    "Nunito", var(--emoji-font-family), "Apple Color Emoji", "Segoe UI Emoji", "Arial", "Helvetica", sans-serif,
-    "Noto Color Emoji";
+$font-family: "Inter", var(--emoji-font-family), "Apple Color Emoji", "Segoe UI Emoji", "Arial", "Helvetica",
+   sans-serif, "Noto Color Emoji";
 
 $monospace-font-family:
     "Fira Code", var(--emoji-font-family), "Apple Color Emoji", "Segoe UI Emoji", "Courier", monospace,
@@ -254,7 +253,8 @@ $lightbox-border-color: #ffffff;
 
 /* Tabbed views */
 $tab-label-fg-color: #45474a;
-$tab-label-active-fg-color: #ffffff;
+/* $tab-label-active-fg-color: #ffffff; */
+$tab-label-active-fg-color: $primary-content;
 
 /* Buttons */
 $button-primary-fg-color: #ffffff;
