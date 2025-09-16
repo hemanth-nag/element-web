@@ -185,9 +185,7 @@ export default class ElectronPlatform extends BasePlatform {
             await this.ipc.call("callDisplayMediaCallback", source ?? { id: "", name: "", thumbnailURL: "" });
         });
 
-        this.electron.on("showToast", async (ev, { title, description, priority = 40 }) => {
-            await this.clientStartedPromiseWithResolvers.promise;
-
+        this.electron.on("showToast", (ev, { title, description, priority = 40 }) => {
             const key = uniqueId("electron_showToast_");
             const onPrimaryClick = (): void => {
                 ToastStore.sharedInstance().dismissToast(key);
