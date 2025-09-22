@@ -19,8 +19,8 @@ export async function getVectorConfig(relativeLocation = ""): Promise<IConfigOpt
     }
 
     const specificConfigPromise = getConfig(`${relativeLocation}config.${domain}.json`);
-    const generalConfigPromise = getConfig(relativeLocation + "config.json");
-
+    const generalConfigPromise =  {} as any;//CONFIG_REPLACE; //getConfig(relativeLocation + "config.json"); ;
+    
     try {
         const configJson = await specificConfigPromise;
         // 404s succeed with an empty json config, so check that there are keys
