@@ -1,13 +1,28 @@
 {
-    "name": "Element",
-    "short_name": "Element",
+    "name": "Wasal",
+    "short_name": "Wasal",
     "display": "standalone",
-    "theme_color": "#76CFA6",
+    "theme_color": "#92722A",
     "start_url": "index.html",
     "icons": [
         {
             "src": "/vector-icons/24.png",
             "sizes": "24x24",
+            "type": "image/png"
+        },
+        {
+            "src": "/vector-icons/44.png",
+            "sizes": "44x44",
+            "type": "image/png"
+        },
+        {
+            "src": "/vector-icons/76.png",
+            "sizes": "76x76",
+            "type": "image/png"
+        },
+        {
+            "src": "/vector-icons/88.png",
+            "sizes": "88x88",
             "type": "image/png"
         },
         {
@@ -21,7 +36,7 @@
             "type": "image/png"
         },
         {
-            "src": "/vector-icons/152png",
+            "src": "/vector-icons/152.png",
             "sizes": "152x152",
             "type": "image/png"
         },
