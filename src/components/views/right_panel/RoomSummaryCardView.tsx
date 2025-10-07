@@ -286,13 +286,8 @@ const RoomSummaryCardView: React.FC<IProps> = ({
                         {/* <MenuItem
                             Icon={ExportArchiveIcon}
                             label={_t("export_chat|title")}
-<<<<<<< HEAD:src/components/views/right_panel/RoomSummaryCardView.tsx
-                            onSelect={vm.onRoomExportClick}
-                        />
-=======
                             onSelect={onRoomExportClick}
                         /> */}
->>>>>>> 0f2141da1a (ICCAAA Updates):src/components/views/right_panel/RoomSummaryCard.tsx
                     </>
                 )}
 
