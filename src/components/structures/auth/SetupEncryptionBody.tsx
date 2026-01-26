@@ -203,14 +203,6 @@ export default class SetupEncryptionBody extends React.Component<IProps, IState>
                     Icon={LockIcon}
                     className="mx_EncryptionCard_noBorder mx_SetupEncryptionBody"
                 >
-                    <EncryptionCardEmphasisedContent>
-                        <span>{_t("encryption|verification|confirm_identity_description")}</span>
-                        <span>
-                            <ExternalLink href="https://element.io/help#encryption-device-verification">
-                                {_t("action|learn_more")}
-                            </ExternalLink>
-                        </span>
-                    </EncryptionCardEmphasisedContent>
                     <EncryptionCardButtons>
                         {verifyButton}
                         {useRecoveryKeyButton}

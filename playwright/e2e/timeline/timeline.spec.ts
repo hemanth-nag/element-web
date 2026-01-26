@@ -487,11 +487,11 @@ test.describe("Timeline", () => {
                 // Send a emote
                 await page
                     .locator(".mx_RoomView_body")
-                    .getByRole("textbox", { name: "Send an unencrypted message…" })
+                    .getByRole("textbox", { name: "Send a message…" })
                     .fill("/me says hello to Mr. Bot");
                 await page
                     .locator(".mx_RoomView_body")
-                    .getByRole("textbox", { name: "Send an unencrypted message…" })
+                    .getByRole("textbox", { name: "Send a message…" })
                     .press("Enter");
                 // Check inline start margin of its avatar
                 // Here --right-padding is for the avatar on the message line

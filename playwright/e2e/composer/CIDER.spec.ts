@@ -31,7 +31,7 @@ test.describe("Composer", () => {
 
     test.describe("CIDER", () => {
         test("sends a message when you click send or press Enter", async ({ page }) => {
-            const composer = page.getByRole("textbox", { name: "Send an unencrypted message…" });
+            const composer = page.getByRole("textbox", { name: "Send a message…" });
 
             // Type a message
             await composer.pressSequentially("my message 0");
@@ -55,7 +55,7 @@ test.describe("Composer", () => {
         });
 
         test("can write formatted text", async ({ page }) => {
-            const composer = page.getByRole("textbox", { name: "Send an unencrypted message…" });
+            const composer = page.getByRole("textbox", { name: "Send a message…" });
 
             await composer.pressSequentially("my bold");
             await composer.press(`${CtrlOrMeta}+KeyB`);
@@ -71,7 +71,7 @@ test.describe("Composer", () => {
             await page.getByTestId("mx_EmojiPicker").locator(".mx_EmojiPicker_item", { hasText: "😇" }).click();
 
             await page.locator(".mx_ContextualMenu_background").click(); // Close emoji picker
-            await page.getByRole("textbox", { name: "Send an unencrypted message…" }).press("Enter"); // Send message
+            await page.getByRole("textbox", { name: "Send a message…" }).press("Enter"); // Send message
 
             await expect(page.locator(".mx_EventTile_body", { hasText: "😇" })).toBeVisible();
         });
@@ -133,7 +133,7 @@ test.describe("Composer", () => {
             });
 
             test("only sends when you press Control+Enter", async ({ page }) => {
-                const composer = page.getByRole("textbox", { name: "Send an unencrypted message…" });
+                const composer = page.getByRole("textbox", { name: "Send a message…" });
                 // Type a message and press Enter
                 await composer.pressSequentially("my message 3");
                 await composer.press("Enter");
@@ -157,7 +157,7 @@ test.describe("Composer", () => {
             });
             await app.viewRoomByName("Bob");
 
-            const composer = page.getByRole("textbox", { name: "Send an unencrypted message…" });
+            const composer = page.getByRole("textbox", { name: "Send a message…" });
             await composer.pressSequentially("@bob");
 
             // Note that we include the user ID here as the room tile is also an 'option' role
@@ -170,7 +170,7 @@ test.describe("Composer", () => {
         });
 
         test("renders emoji autocomplete", { tag: "@screenshot" }, async ({ page }) => {
-            const composer = page.getByRole("textbox", { name: "Send an unencrypted message…" });
+            const composer = page.getByRole("textbox", { name: "Send a message…" });
 
             // Type ":+1" to trigger emoji autocomplete
             await composer.pressSequentially(":+1");
