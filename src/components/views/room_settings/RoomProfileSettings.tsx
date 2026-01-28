@@ -35,6 +35,7 @@ interface IState {
     canSetName: boolean;
     canSetTopic: boolean;
     canSetAvatar: boolean;
+    isDm: boolean;
 }
 
 function idNameForRoom(room: Room): string {
@@ -71,6 +72,7 @@ export default class RoomProfileSettings extends React.Component<IProps, IState>
         const name = nameEvent && nameEvent.getContent() ? nameEvent.getContent()["name"] : "";
 
         const userId = client.getSafeUserId();
+        const isDm = Boolean(DMRoomMap.shared().getUserIdForRoomId(room.roomId));
         this.state = {
             originalDisplayName: name,
             displayName: name,
@@ -83,6 +85,7 @@ export default class RoomProfileSettings extends React.Component<IProps, IState>
             canSetName: room.currentState.maySendStateEvent(EventType.RoomName, userId),
             canSetTopic: room.currentState.maySendStateEvent(EventType.RoomTopic, userId),
             canSetAvatar: room.currentState.maySendStateEvent(EventType.RoomAvatar, userId),
+            isDm,
         };
     }
 
@@ -232,30 +235,32 @@ export default class RoomProfileSettings extends React.Component<IProps, IState>
         return (
             <form onSubmit={this.saveProfile} autoComplete="off" noValidate={true} className="mx_RoomProfileSettings">
                 <div className="mx_RoomProfileSettings_profile">
-                    <div className="mx_RoomProfileSettings_profile_controls">
-                        <Field
-                            label={_t("room_settings|general|name_field_label")}
-                            type="text"
-                            value={this.state.displayName}
-                            autoComplete="off"
-                            onChange={this.onDisplayNameChanged}
-                            disabled={!this.state.canSetName}
-                        />
-                        <Field
-                            className={classNames(
-                                "mx_RoomProfileSettings_profile_controls_topic",
-                                "mx_RoomProfileSettings_profile_controls_topic--room",
-                            )}
-                            id="profileTopic" // See: NewRoomIntro.tsx
-                            label={_t("room_settings|general|topic_field_label")}
-                            disabled={!this.state.canSetTopic}
-                            type="text"
-                            value={this.state.topic}
-                            autoComplete="off"
-                            onChange={this.onTopicChanged}
-                            element="textarea"
-                        />
-                    </div>
+                    {!this.state.isDm && (
+                        <div className="mx_RoomProfileSettings_profile_controls">
+                            <Field
+                                label={_t("room_settings|general|name_field_label")}
+                                type="text"
+                                value={this.state.displayName}
+                                autoComplete="off"
+                                onChange={this.onDisplayNameChanged}
+                                disabled={!this.state.canSetName}
+                            />
+                            <Field
+                                className={classNames(
+                                    "mx_RoomProfileSettings_profile_controls_topic",
+                                    "mx_RoomProfileSettings_profile_controls_topic--room",
+                                )}
+                                id="profileTopic" // See: NewRoomIntro.tsx
+                                label={_t("room_settings|general|topic_field_label")}
+                                disabled={!this.state.canSetTopic}
+                                type="text"
+                                value={this.state.topic}
+                                autoComplete="off"
+                                onChange={this.onTopicChanged}
+                                element="textarea"
+                            />
+                        </div>
+                    )}
                     <AvatarSetting
                         avatar={
                             this.state.avatarRemovalPending
