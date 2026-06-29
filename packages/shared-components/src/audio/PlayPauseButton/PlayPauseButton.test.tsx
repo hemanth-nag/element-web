@@ -6,14 +6,15 @@
  */
 
 import { composeStories } from "@storybook/react-vite";
-import { render } from "jest-matrix-react";
+import { render } from "@test-utils";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 import { fn } from "storybook/test";
+import { describe, it, expect } from "vitest";
 
 import * as stories from "./PlayPauseButton.stories.tsx";
 
-const { Default, Playing } = composeStories(stories);
+const { Default, Playing, Disabled } = composeStories(stories);
 
 describe("PlayPauseButton", () => {
     it("renders the button in default state", () => {
@@ -26,6 +27,11 @@ describe("PlayPauseButton", () => {
         expect(container).toMatchSnapshot();
     });
 
+    it("renders the button in disabled state", () => {
+        const { container } = render(<Disabled />);
+        expect(container).toMatchSnapshot();
+    });
+
     it("calls togglePlay when clicked", async () => {
         const user = userEvent.setup();
         const togglePlay = fn();
@@ -33,5 +39,13 @@ describe("PlayPauseButton", () => {
         const { getByRole } = render(<Default togglePlay={togglePlay} />);
         await user.click(getByRole("button"));
         expect(togglePlay).toHaveBeenCalled();
+    });
+
+    it("preserves consumer class names alongside shared styles", () => {
+        const { getByRole } = render(<Default className="custom-play-pause-button" />);
+        const button = getByRole("button");
+
+        expect(button).toHaveClass("custom-play-pause-button");
+        expect(button.className).toContain("PlayPauseButton-module_button");
     });
 });
