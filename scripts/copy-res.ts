@@ -10,9 +10,13 @@ import webpack from "webpack";
 import type { Translations } from "matrix-web-i18n";
 
 const I18N_BASE_PATH = "src/i18n/strings/";
-const INCLUDE_LANGS = [...new Set([...fs.readdirSync(I18N_BASE_PATH)])]
-    .filter((fn) => fn.endsWith(".json"))
-    .map((f) => f.slice(0, -5));
+//const INCLUDE_LANGS = [...new Set([...fs.readdirSync(I18N_BASE_PATH)])]
+//    .filter((fn) => fn.endsWith(".json"))
+//    .map((f) => f.slice(0, -5));
+// Only include English and Arabic languages
+const INCLUDE_LANGS = ["en_EN", "ar"].filter((lang) => {
+    return fs.existsSync(I18N_BASE_PATH + lang + ".json");
+});
 
 const argv = parseArgs(process.argv.slice(2), {});
 

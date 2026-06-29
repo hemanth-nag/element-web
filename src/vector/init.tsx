@@ -76,7 +76,13 @@ export async function loadLanguage(): Promise<void> {
     }
     try {
         await languageHandler.setLanguage(...langs);
-        document.documentElement.setAttribute("lang", languageHandler.getCurrentLanguage());
+        const currentLang = languageHandler.getCurrentLanguage();
+        document.documentElement.setAttribute("lang", currentLang);
+        
+        // Set RTL direction for Arabic and other RTL languages
+        // const rtlLanguages = ["ar", "he", "fa", "ur", "yi"];
+        // const isRtl = rtlLanguages.some((rtlLang) => currentLang.startsWith(rtlLang));
+        // document.documentElement.dir = isRtl ? "rtl" : "ltr";
     } catch (e) {
         logger.error("Unable to set language", e);
     }
