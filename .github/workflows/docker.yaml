@@ -20,42 +20,29 @@ jobs:
         env:
             TEST_TAG: vectorim/element-web:test
         steps:
-            - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+            - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
               with:
                   fetch-depth: 0 # needed for docker-package to be able to calculate the version
+                  persist-credentials: false
 
             - name: Install Cosign
-              uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac # v3
+              uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
               if: github.event_name != 'pull_request'
 
             - name: Set up QEMU
-              uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3
+              uses: docker/setup-qemu-action@06116385d9baf250c9f4dcb4858b16962ea869c3 # v4
 
             - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3
+              uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4
               with:
                   install: true
 
-            - name: Login to Docker Hub
-              uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
-              if: github.event_name != 'pull_request'
-              with:
-                  username: ${{ secrets.DOCKERHUB_USERNAME }}
-                  password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-            - name: Login to GitHub Container Registry
-              uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
-              if: github.event_name != 'pull_request'
-              with:
-                  registry: ghcr.io
-                  username: ${{ github.repository_owner }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
-
             - name: Build and load
               id: test-build
-              uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6
+              uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7
               with:
                   context: .
+                  file: apps/web/Dockerfile
                   load: true
 
             - name: Test the image
@@ -66,9 +53,9 @@ jobs:
                   set -x
 
                   # Make a fake module to test the image
-                  MODULE_PATH="modules/module_name/index.js"
-                  mkdir -p $(dirname $MODULE_PATH)
-                  echo 'alert("Testing");' > $MODULE_PATH
+                  MODULE_PATH="module_name/index.js"
+                  mkdir -p $(dirname test_modules/$MODULE_PATH)
+                  echo 'alert("Testing");' > test_modules/$MODULE_PATH
 
                   # Spin up a container of the image
                   ELEMENT_WEB_PORT=8181
@@ -77,14 +64,14 @@ jobs:
                           --rm \
                           -e "ELEMENT_WEB_PORT=$ELEMENT_WEB_PORT" \
                           -dp "$ELEMENT_WEB_PORT:$ELEMENT_WEB_PORT" \
-                          -v $(pwd)/modules:/modules \
+                          -v $(pwd)/test_modules:/modules \
                           "$IMAGEID" \
                   )
 
                   # Run some smoke tests
                   wget --retry-connrefused --tries=5 -q --wait=3 --spider "http://localhost:$ELEMENT_WEB_PORT/modules/module_name/index.js"
                   MODULE_0=$(curl "http://localhost:$ELEMENT_WEB_PORT/config.json" | jq -r .modules[0])
-                  test "$MODULE_0" = "/${MODULE_PATH}"
+                  test "$MODULE_0" = "/modules/${MODULE_PATH}"
 
                   # Check healthcheck
                   until test "$(docker inspect -f {{.State.Health.Status}} $CONTAINER_ID)" == "healthy"; do
@@ -96,24 +83,77 @@ jobs:
 
             - name: Docker meta
               id: meta
-              uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5
+              uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6
               if: github.event_name != 'pull_request'
               with:
                   images: |
                       vectorim/element-web
                       ghcr.io/element-hq/element-web
+                      oci-push.vpn.infra.element.io/element-web
                   tags: |
                       type=ref,event=branch
                       type=ref,event=tag
                   flavor: |
                       latest=${{ contains(github.ref_name, '-rc.') && 'false' || 'auto' }}
 
+            - name: Login to Docker Hub
+              uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
+              if: github.event_name != 'pull_request'
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            - name: Login to GitHub Container Registry
+              uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
+              if: github.event_name != 'pull_request'
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.repository_owner }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Connect to Tailscale
+              uses: tailscale/github-action@306e68a486fd2350f2bfc3b19fcd143891a4a2d8 # v4
+              if: github.event_name != 'pull_request'
+              with:
+                  oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+                  audience: ${{ secrets.TS_AUDIENCE }}
+                  tags: tag:github-actions
+
+            - name: Compute vault jwt role name
+              id: vault-jwt-role
+              if: github.event_name != 'pull_request'
+              run: |
+                  echo "role_name=github_service_management_$( echo "${{ github.repository }}" | sed -r 's|[/-]|_|g')" | tee -a "$GITHUB_OUTPUT"
+
+            - name: Get team registry token
+              id: import-secrets
+              uses: hashicorp/vault-action@892a26828f195e65540a40b4768ae4571f51ebfc # v4
+              if: github.event_name != 'pull_request'
+              with:
+                  url: https://vault.infra.ci.i.element.dev
+                  role: ${{ steps.vault-jwt-role.outputs.role_name }}
+                  path: service-management/github-actions
+                  jwtGithubAudience: https://vault.infra.ci.i.element.dev
+                  method: jwt
+                  secrets: |
+                      services/web-repositories/secret/data/oci.element.io username | OCI_USERNAME ;
+                      services/web-repositories/secret/data/oci.element.io password | OCI_PASSWORD ;
+
+            - name: Login to oci.element.io Registry
+              uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
+              if: github.event_name != 'pull_request'
+              with:
+                  registry: oci-push.vpn.infra.element.io
+                  username: ${{ steps.import-secrets.outputs.OCI_USERNAME }}
+                  password: ${{ steps.import-secrets.outputs.OCI_PASSWORD }}
+
             - name: Build and push
               id: build-and-push
-              uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6
+              uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7
               if: github.event_name != 'pull_request'
               with:
                   context: .
+                  file: apps/web/Dockerfile
                   push: true
                   platforms: linux/amd64,linux/arm64
                   tags: ${{ steps.meta.outputs.tags }}
@@ -139,16 +179,3 @@ jobs:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
                   password: ${{ secrets.DOCKERHUB_TOKEN }}
                   repository: vectorim/element-web
-
-            - name: Repository Dispatch
-              uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4
-              if: github.event_name != 'pull_request'
-              with:
-                  repository: element-hq/element-web-pro
-                  token: ${{ secrets.ELEMENT_BOT_TOKEN }}
-                  event-type: image-built
-                  # Stable way to determine the :version
-                  client-payload: |-
-                      {
-                          "base-ref": "${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}"
-                      }
