@@ -5,7 +5,11 @@
 
 set -e
 
-# Since the deps are fetched from git & linked, we can rev-parse
-JSSDK_SHA=$(git -C $(pnpm -w root)/matrix-js-sdk rev-parse --short=12 HEAD)
 VECTOR_SHA=$(git rev-parse --short=12 HEAD) # use the ACTUAL SHA rather than assume develop
-echo "$VECTOR_SHA-js-$JSSDK_SHA"
+JSSDK_DIR="$(pnpm -w root)/matrix-js-sdk"
+if [ -d "$JSSDK_DIR" ] && git -C "$JSSDK_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    JSSDK_SHA=$(git -C "$JSSDK_DIR" rev-parse --short=12 HEAD)
+    echo "$VECTOR_SHA-js-$JSSDK_SHA"
+else
+    echo "$VECTOR_SHA"
+fi
