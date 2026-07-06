@@ -31,6 +31,7 @@ import JoinRuleDropdown from "../elements/JoinRuleDropdown";
 import { getKeyBindingsManager } from "../../../KeyBindingsManager";
 import { KeyBindingAction } from "../../../accessibility/KeyboardShortcuts";
 import { privateShouldBeEncrypted } from "../../../utils/rooms";
+import { shouldForceDisableEncryption } from "../../../utils/crypto/shouldForceDisableEncryption";
 import SettingsStore from "../../../settings/SettingsStore";
 import { UIFeature } from "../../../settings/UIFeature";
 
@@ -367,7 +368,7 @@ export default class CreateRoomDialog extends React.Component<IProps, IState> {
         }
 
         let e2eeSection: JSX.Element | undefined;
-        if (this.state.joinRule !== JoinRule.Public) {
+        if (this.state.joinRule !== JoinRule.Public && !shouldForceDisableEncryption(MatrixClientPeg.safeGet())) {
             let microcopy: string;
             if (privateShouldBeEncrypted(MatrixClientPeg.safeGet())) {
                 if (this.state.canChangeEncryption) {
@@ -395,7 +396,8 @@ export default class CreateRoomDialog extends React.Component<IProps, IState> {
         let e2eeStateSection: JSX.Element | undefined;
         if (
             SettingsStore.getValue("feature_msc4362_encrypted_state_events", null, false) &&
-            this.state.joinRule !== JoinRule.Public
+            this.state.joinRule !== JoinRule.Public &&
+            !shouldForceDisableEncryption(MatrixClientPeg.safeGet())
         ) {
             let microcopy: string;
             if (!this.state.canChangeEncryption) {

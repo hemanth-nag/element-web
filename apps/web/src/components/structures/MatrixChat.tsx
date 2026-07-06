@@ -76,8 +76,7 @@ import DialPadModal from "../views/voip/DialPadModal";
 import { showToast as showMobileGuideToast } from "../../toasts/MobileGuideToast";
 import { shouldUseLoginForWelcome } from "../../utils/pages";
 import RoomListStore from "../../stores/room-list/RoomListStore";
-import { RoomUpdateCause } from "../../stores/room-list/models";
-import { ModuleRunner } from "../../modules/ModuleRunner";
+// import { ModuleRunner } from "../../modules/ModuleRunner";
 import Spinner from "../views/elements/Spinner";
 import QuestionDialog from "../views/dialogs/QuestionDialog";
 import UserSettingsDialog from "../views/dialogs/UserSettingsDialog";
@@ -125,14 +124,13 @@ import RovingSpotlightDialog from "../views/dialogs/spotlight/SpotlightDialog";
 import { findDMForUser } from "../../utils/dm/findDMForUser";
 import { getHtmlText } from "../../HtmlUtils";
 import { NotificationLevel } from "../../stores/notifications/NotificationLevel";
-import { type UserTab } from "../views/dialogs/UserTab";
-import { shouldSkipSetupEncryption } from "../../utils/crypto/shouldSkipSetupEncryption";
+// import { shouldSkipSetupEncryption } from "../../utils/crypto/shouldSkipSetupEncryption";
 import { Filter } from "../views/dialogs/spotlight/Filter";
 import { SessionLockStolenView } from "./auth/SessionLockStolenView";
 import { ConfirmSessionLockTheftView } from "./auth/ConfirmSessionLockTheftView";
 import { LoginSplashView } from "./auth/LoginSplashView";
 import { cleanUpDraftsIfRequired } from "../../DraftCleaner";
-import { InitialCryptoSetupStore } from "../../stores/InitialCryptoSetupStore";
+// import { InitialCryptoSetupStore } from "../../stores/InitialCryptoSetupStore";
 import { setTheme } from "../../theme";
 import { type OpenForwardDialogPayload } from "../../dispatcher/payloads/OpenForwardDialogPayload";
 import { ShareFormat, type SharePayload } from "../../dispatcher/payloads/SharePayload";
@@ -422,6 +420,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         }
 
         const promisesList: Promise<unknown>[] = [this.firstSyncPromise.promise];
+        /*
         let crossSigningIsSetUp = false;
         if (cryptoEnabled) {
             // check if the user has previously published public cross-signing keys,
@@ -433,6 +432,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                 })(),
             );
         }
+        */
 
         // Now update the state to say we're waiting for the first sync to complete rather
         // than for the login to finish.
@@ -445,6 +445,9 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
             return;
         }
 
+        // Bypass verification screen and show main screen directly
+        this.onShowPostLoginScreen();
+        /*
         if (crossSigningIsSetUp) {
             // if the user has previously set up cross-signing, verify this device so we can fetch the
             // private keys.
@@ -465,6 +468,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         } else {
             this.onShowPostLoginScreen();
         }
+        */
         this.setState({ pendingInitialSync: false });
     }
 
@@ -1804,7 +1808,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
     private async onClientStarted(): Promise<void> {
         const cli = MatrixClientPeg.safeGet();
 
-        const shouldForceVerification = await this.shouldForceVerification();
+        // const shouldForceVerification = await this.shouldForceVerification();
 
         const crypto = cli.getCrypto();
         if (crypto) {
@@ -1840,11 +1844,15 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         // If the view is something else, that probably means it's a login or registration view; we handle that in
         // `postLoginSetup`.
         if (this.state.view === Views.PENDING_CLIENT_START) {
+            // Bypass COMPLETE_SECURITY and show main screen directly
+            this.onShowPostLoginScreen();
+            /*
             if (shouldForceVerification) {
                 this.setStateForNewView({ view: Views.COMPLETE_SECURITY });
             } else {
                 this.onShowPostLoginScreen();
             }
+            */
         }
     }
 

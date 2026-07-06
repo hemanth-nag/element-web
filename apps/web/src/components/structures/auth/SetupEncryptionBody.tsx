@@ -196,9 +196,6 @@ export default class SetupEncryptionBody extends React.Component<IProps, IState>
                     </Button>
                 );
             }
-
-            this.props.onFinished(); // Bypass the modal dialog
-
             return (
                 <EncryptionCard
                     title={_t("encryption|verification|confirm_identity_title")}

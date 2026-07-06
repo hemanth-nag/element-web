@@ -6,13 +6,11 @@
  */
 
 import React, { useState, type JSX } from "react";
-import { IconButton, Menu, MenuItem } from "@vector-im/compound-web";
-import ComposeIcon from "@vector-im/compound-design-tokens/assets/web/icons/compose";
+import { Menu, MenuItem, Button } from "@vector-im/compound-web";
 import VideoCallIcon from "@vector-im/compound-design-tokens/assets/web/icons/video-call";
 import ChatIcon from "@vector-im/compound-design-tokens/assets/web/icons/chat";
 import RoomIcon from "@vector-im/compound-design-tokens/assets/web/icons/room";
 import SectionIcon from "@vector-im/compound-design-tokens/assets/web/icons/section";
-import PlusIcon from "@vector-im/compound-design-tokens/assets/web/icons/plus";
 
 import { type RoomListHeaderViewModel } from "../RoomListHeaderView";
 import { useI18n } from "../../../core/i18n/i18nContext";
@@ -37,7 +35,7 @@ interface ComposeMenuViewProps {
 export function ComposeMenuView({ vm }: ComposeMenuViewProps): JSX.Element {
     const { translate: _t } = useI18n();
     const [open, setOpen] = useState(false);
-    const { canCreateRoom, canCreateVideoRoom, canCreateSection, useComposeIcon } = useViewModel(vm);
+    const { canCreateRoom, canCreateVideoRoom, canCreateSection } = useViewModel(vm);
 
     return (
         <Menu
@@ -47,14 +45,9 @@ export function ComposeMenuView({ vm }: ComposeMenuViewProps): JSX.Element {
             title={_t("action|open_menu")}
             align="start"
             trigger={
-                // 28px button with a 20px icon
-                <IconButton size="28px" style={{ padding: "4px" }} tooltip={_t("action|new_conversation")}>
-                    {useComposeIcon ? (
-                        <ComposeIcon color="var(--cpd-color-icon-secondary)" aria-hidden />
-                    ) : (
-                        <PlusIcon color="var(--cpd-color-icon-secondary)" aria-hidden />
-                    )}
-                </IconButton>
+                <Button size="md" kind="primary" Icon={ChatIcon}>
+                    {_t("action|new")}
+                </Button>
             }
         >
             <MenuItem Icon={ChatIcon} label={_t("action|start_chat")} onSelect={vm.createChatRoom} hideChevron />

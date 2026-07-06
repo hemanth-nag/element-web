@@ -142,7 +142,7 @@ export default class HelpUserSettingsTab extends React.Component<EmptyObject, IS
                                 {
                                     colr: (sub) => (
                                         <ExternalLink
-                                            href="https://github.com/matrix-org/twemoji-colr"
+                                            href=""
                                             rel="noreferrer noopener"
                                             target="_blank"
                                         >

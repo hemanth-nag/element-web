@@ -28,6 +28,7 @@ import InlineSpinner from "../../../elements/InlineSpinner";
 import { PosthogAnalytics } from "../../../../../PosthogAnalytics";
 import { showDialog as showAnalyticsLearnMoreDialog } from "../../../dialogs/AnalyticsLearnMoreDialog";
 import { privateShouldBeEncrypted } from "../../../../../utils/rooms";
+import { shouldForceDisableEncryption } from "../../../../../utils/crypto/shouldForceDisableEncryption";
 import SettingsTab from "../SettingsTab";
 import { SettingsSection } from "../../shared/SettingsSection";
 import { SettingsSubsection, SettingsSubsectionText } from "../../shared/SettingsSubsection";
@@ -303,8 +304,10 @@ export default class SecurityUserSettingsTab extends React.Component<IProps, ISt
             </SettingsSubsection>
         );
 
+        const isEncryptionForceDisabled = shouldForceDisableEncryption(MatrixClientPeg.safeGet());
+
         let warning;
-        if (!privateShouldBeEncrypted(MatrixClientPeg.safeGet())) {
+        if (!isEncryptionForceDisabled && !privateShouldBeEncrypted(MatrixClientPeg.safeGet())) {
             warning = (
                 <div className="mx_SecurityUserSettingsTab_warning">
                     <WarningIcon />
@@ -381,10 +384,12 @@ export default class SecurityUserSettingsTab extends React.Component<IProps, ISt
             <SettingsTab>
                 {warning}
                 <SetIntegrationManager />
-                <SettingsSection heading={_t("settings|security|encryption_section")}>
-                    {secureBackup}
-                    {eventIndex}
-                </SettingsSection>
+                {!isEncryptionForceDisabled && (
+                    <SettingsSection heading={_t("settings|security|encryption_section")}>
+                        {secureBackup}
+                        {eventIndex}
+                    </SettingsSection>
+                )}
                 {privacySection}
                 {advancedSection}
             </SettingsTab>

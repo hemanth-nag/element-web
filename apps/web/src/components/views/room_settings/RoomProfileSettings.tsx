@@ -235,16 +235,16 @@ export default class RoomProfileSettings extends React.Component<IProps, IState>
         return (
             <form onSubmit={this.saveProfile} autoComplete="off" noValidate={true} className="mx_RoomProfileSettings">
                 <div className="mx_RoomProfileSettings_profile">
-                    {!this.state.isDm && (
-                        <div className="mx_RoomProfileSettings_profile_controls">
-                            <Field
-                                label={_t("room_settings|general|name_field_label")}
-                                type="text"
-                                value={this.state.displayName}
-                                autoComplete="off"
-                                onChange={this.onDisplayNameChanged}
-                                disabled={!this.state.canSetName}
-                            />
+                    <div className="mx_RoomProfileSettings_profile_controls">
+                        <Field
+                            label={_t("room_settings|general|name_field_label")}
+                            type="text"
+                            value={this.state.displayName}
+                            autoComplete="off"
+                            onChange={this.onDisplayNameChanged}
+                            disabled={!this.state.canSetName || this.state.isDm}
+                        />
+                        {!this.state.isDm && (
                             <Field
                                 className={classNames(
                                     "mx_RoomProfileSettings_profile_controls_topic",
@@ -259,8 +259,8 @@ export default class RoomProfileSettings extends React.Component<IProps, IState>
                                 onChange={this.onTopicChanged}
                                 element="textarea"
                             />
-                        </div>
-                    )}
+                        )}
+                    </div>
                     <AvatarSetting
                         avatar={
                             this.state.avatarRemovalPending

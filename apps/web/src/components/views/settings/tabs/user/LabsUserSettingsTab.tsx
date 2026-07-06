@@ -111,7 +111,7 @@ export default class LabsUserSettingsTab extends React.Component<EmptyObject> {
                                         a: (sub) => {
                                             return (
                                                 <a
-                                                    href="https://github.com/vector-im/element-web/blob/develop/docs/labs.md"
+                                                    href=""
                                                     rel="noreferrer noopener"
                                                     target="_blank"
                                                 >

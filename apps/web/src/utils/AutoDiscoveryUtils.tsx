@@ -113,7 +113,7 @@ export default class AutoDiscoveryUtils {
                     a: (sub) => {
                         return (
                             <a
-                                href="https://github.com/vector-im/element-web/blob/master/docs/config.md"
+                                href=""
                                 target="_blank"
                                 rel="noreferrer noopener"
                             >

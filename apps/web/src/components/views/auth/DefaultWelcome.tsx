@@ -14,7 +14,8 @@ import { _t } from "../../../languageHandler";
 import SdkConfig from "../../../SdkConfig.ts";
 import { MatrixClientPeg } from "../../../MatrixClientPeg.ts";
 import { isElementBranded } from "../../../branding.ts";
-import { useFeatureEnabled } from "../../../hooks/useSettings.ts";
+import { useFeatureEnabled, useSettingValue } from "../../../hooks/useSettings.ts";
+import { UIFeature } from "../../../settings/UIFeature.ts";
 import { type ValidatedServerConfig } from "../../../utils/ValidatedServerConfig.ts";
 import { useAsyncMemo } from "../../../hooks/useAsyncMemo.ts";
 import Spinner from "../elements/Spinner.tsx";
@@ -38,6 +39,7 @@ const DefaultWelcome: React.FC<Props> = ({ serverConfig }) => {
     const showGuestFunctions = !!MatrixClientPeg.get();
     const isElement = isElementBranded();
 
+    const isRegistrationEnabled = useSettingValue(UIFeature.Registration);
     const isQrLoginEnabled = useFeatureEnabled("feature_login_with_qr");
     const showQrButton = useAsyncMemo(async () => {
         if (!isQrLoginEnabled) return false;
@@ -65,9 +67,11 @@ const DefaultWelcome: React.FC<Props> = ({ serverConfig }) => {
                 <Button as="a" href="#/login" kind="primary" size="md">
                     {showQrButton ? _t("auth|sign_in_manually") : _t("action|sign_in")}
                 </Button>
-                <Button as="a" href="#/register" kind="secondary" size="md">
-                    {_t("action|create_account")}
-                </Button>
+                {isRegistrationEnabled && (
+                    <Button as="a" href="#/register" kind="secondary" size="md">
+                        {_t("action|create_account")}
+                    </Button>
+                )}
                 {showGuestFunctions && (
                     <Button as="a" href="#/directory" kind="tertiary" size="md">
                         {_t("action|explore_rooms")}

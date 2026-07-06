@@ -56,7 +56,7 @@ function boldText(text: string): JSX.Element {
 }
 
 function helpLink(sub: string): JSX.Element {
-    return <ExternalLink href="https://element.io/help#settings2">{sub}</ExternalLink>;
+    return <ExternalLink href="">{sub}</ExternalLink>;
 }
 
 function useHasUnreadNotifications(): boolean {

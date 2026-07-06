@@ -6,9 +6,8 @@
  */
 
 import React, { type JSX } from "react";
-import { IconButton, H1 } from "@vector-im/compound-web";
-import ComposeIcon from "@vector-im/compound-design-tokens/assets/web/icons/compose";
-import PlusIcon from "@vector-im/compound-design-tokens/assets/web/icons/plus";
+import { IconButton, H1, Button } from "@vector-im/compound-web";
+import ChatIcon from "@vector-im/compound-design-tokens/assets/web/icons/chat";
 import { CollapseAllIcon, ExpandAllIcon } from "@vector-im/compound-design-tokens/assets/web/icons";
 
 import { type ViewModel, useViewModel } from "../../core/viewmodel";
@@ -152,7 +151,7 @@ interface RoomListHeaderViewProps {
  */
 export function RoomListHeaderView({ vm }: Readonly<RoomListHeaderViewProps>): JSX.Element {
     const { translate: _t } = useI18n();
-    const { title, displaySpaceMenu, displayComposeMenu, useComposeIcon, collapseSections } = useViewModel(vm);
+    const { title, displaySpaceMenu, displayComposeMenu, collapseSections } = useViewModel(vm);
 
     return (
         <Flex
@@ -194,18 +193,14 @@ export function RoomListHeaderView({ vm }: Readonly<RoomListHeaderViewProps>): J
                     {displayComposeMenu ? (
                         <ComposeMenuView vm={vm} />
                     ) : (
-                        <IconButton
-                            size="28px"
-                            style={{ padding: "4px" }}
-                            onClick={(e) => vm.createChatRoom(e.nativeEvent)}
-                            tooltip={_t("action|new_conversation")}
+                        <Button
+                            size="md"
+                            kind="primary"
+                            Icon={ChatIcon}
+                            onClick={(e: React.MouseEvent<HTMLButtonElement>) => vm.createChatRoom(e.nativeEvent)}
                         >
-                            {useComposeIcon ? (
-                                <ComposeIcon color="var(--cpd-color-icon-secondary)" aria-hidden />
-                            ) : (
-                                <PlusIcon color="var(--cpd-color-icon-secondary)" aria-hidden />
-                            )}
-                        </IconButton>
+                            {_t("action|new")}
+                        </Button>
                     )}
                 </Flex>
             </Flex>
