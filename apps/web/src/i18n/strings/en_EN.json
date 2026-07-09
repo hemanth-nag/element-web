@@ -3373,7 +3373,7 @@
         "disambiguated_profile": "%(displayName)s (%(matrixId)s)",
         "download_action_downloading": "Downloading",
         "download_failed": "Download failed",
-        "download_failed_description": "An error occurred while downloading this file",
+        "download_failed_description": "An error occurred while downloading this file. Try reloading the site.",
         "edits": {
             "tooltip_label": "Edited at %(date)s. Click to view edits.",
             "tooltip_sub": "Click to view edits",
@@ -3393,7 +3393,7 @@
         "m.audio": {
             "error_downloading_audio": "Error downloading audio",
             "error_processing_audio": "Error processing audio message",
-            "error_processing_voice_message": "Error processing voice message"
+            "error_processing_voice_message": "Error processing voice message. Try reloading the site."
         },
         "m.beacon_info": {
             "view_live_location": "View live location"

@@ -68,11 +68,15 @@ export default class RoomProfileSettings extends React.Component<IProps, IState>
         const topicEvent = room.currentState.getStateEvents(EventType.RoomTopic, "");
         const topic = (topicEvent && ContentHelpers.parseTopicContent(topicEvent.getContent()).text) || "";
 
-        const nameEvent = room.currentState.getStateEvents(EventType.RoomName, "");
-        const name = nameEvent && nameEvent.getContent() ? nameEvent.getContent()["name"] : "";
-
         const userId = client.getSafeUserId();
         const isDm = Boolean(DMRoomMap.shared().getUserIdForRoomId(room.roomId));
+
+        const nameEvent = room.currentState.getStateEvents(EventType.RoomName, "");
+        let name = nameEvent && nameEvent.getContent() ? nameEvent.getContent()["name"] : "";
+        if (isDm && !name) {
+            name = room.name;
+        }
+
         this.state = {
             originalDisplayName: name,
             displayName: name,

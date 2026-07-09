@@ -46,6 +46,7 @@ import { UIComponent } from "../../../settings/UIFeature";
 import { isKnockDenied } from "../../../utils/membership";
 import SettingsStore from "../../../settings/SettingsStore";
 import { getNotificationIcon } from "../dialogs/spotlight/RoomResultContextMenus.tsx";
+import DMRoomMap from "../../../utils/DMRoomMap";
 
 interface Props {
     room: Room;
@@ -383,6 +384,18 @@ class RoomTile extends React.PureComponent<Props, State> {
         });
 
         let name = this.props.room.name;
+
+        // Fallback for DMs showing MXID (usually due to lazy loaded members)
+        if (typeof name === "string" && name.startsWith("@") && name.includes(":")) {
+            const dmUserId = DMRoomMap.shared().getUserIdForRoomId(this.props.room.roomId);
+            if (dmUserId && name === dmUserId) {
+                const user = MatrixClientPeg.safeGet().getUser(dmUserId);
+                if (user && user.displayName) {
+                    name = user.displayName;
+                }
+            }
+        }
+
         if (typeof name !== "string") name = "";
         name = name.replace(":", ":\u200b"); // add a zero-width space to allow linewrapping after the colon
 
