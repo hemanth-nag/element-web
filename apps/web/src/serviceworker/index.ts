@@ -142,6 +142,17 @@ async function getAuthData(client: unknown): Promise<{ accessToken: string; home
     }
 }
 
+const pendingUserInfoRequests = new Map<string, (data: any) => void>();
+
+global.addEventListener("message", (event: MessageEvent) => {
+    const responseKey = event.data?.responseKey;
+    if (responseKey && pendingUserInfoRequests.has(responseKey)) {
+        const resolve = pendingUserInfoRequests.get(responseKey)!;
+        pendingUserInfoRequests.delete(responseKey);
+        resolve(event.data);
+    }
+});
+
 // Ideally we'd use the `Client` interface for `client`, but since it's not available (see 'fetch' listener), we use
 // unknown for now and force-cast it to something close enough inside the function.
 async function askClientForUserIdParams(
@@ -157,21 +168,20 @@ async function askClientForUserIdParams(
         // We could also potentially use some version of TLS to encrypt postMessage, though that feels way more involved
         // than just reading IndexedDB ourselves.
 
-        // Avoid stalling the tab in case something goes wrong.
-        const timeoutId = setTimeout(() => reject(new Error("timeout in postMessage")), 1000);
-
         // We don't need particularly good randomness here - we just use this to generate a request ID, so we know
         // which postMessage reply is for our active request.
         const responseKey = Math.random().toString(36);
 
-        // Add the listener first, just in case the tab is *really* fast.
-        const listener = (event: MessageEvent): void => {
-            if (event.data?.responseKey !== responseKey) return; // not for us
-            clearTimeout(timeoutId); // do this as soon as possible, avoiding a race between resolve and reject.
-            resolve(event.data); // "unblock" the remainder of the thread, if that were such a thing in JavaScript.
-            global.removeEventListener("message", listener); // cleanup, since we're not going to do anything else.
-        };
-        global.addEventListener("message", listener);
+        // Avoid stalling the tab in case something goes wrong.
+        const timeoutId = setTimeout(() => {
+            pendingUserInfoRequests.delete(responseKey);
+            reject(new Error("timeout in postMessage"));
+        }, 1000);
+
+        pendingUserInfoRequests.set(responseKey, (data) => {
+            clearTimeout(timeoutId);
+            resolve(data);
+        });
 
         // Ask the tab for the information we need. This is handled by WebPlatform.
         (client as Window).postMessage({ responseKey, type: "userinfo" });

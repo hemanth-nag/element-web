@@ -105,6 +105,25 @@ const supportedBrowser = checkBrowserFeatures();
 // the browser to use as much parallelism as it can.
 // Load parallelism is based on research in https://github.com/element-hq/element-web/issues/12253
 async function start(): Promise<void> {
+    // A hard refresh bypasses the service worker, which breaks media requests that require auth headers.
+    // We detect this by checking if there's no controller but the user is logged in.
+    if (
+        navigator.serviceWorker &&
+        navigator.serviceWorker.controller === null &&
+        window.localStorage &&
+        window.localStorage.getItem("mx_user_id")
+    ) {
+        if (!window.sessionStorage.getItem("sw_hard_refresh_reloaded")) {
+            window.sessionStorage.setItem("sw_hard_refresh_reloaded", "true");
+            window.location.reload();
+            return; // Halt startup to prevent locking IndexedDB/SessionLock before the reload
+        } else {
+            console.warn("Service worker is not controlling the page, and we already reloaded once.");
+        }
+    } else if (window.sessionStorage) {
+        window.sessionStorage.removeItem("sw_hard_refresh_reloaded");
+    }
+
     if (shouldPolyFillIntlSegmenter()) {
         await import(/* webpackChunkName: "intl-segmenter-polyfill" */ "@formatjs/intl-segmenter/polyfill-force.js");
     }
