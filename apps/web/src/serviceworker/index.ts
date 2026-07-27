@@ -176,7 +176,7 @@ async function askClientForUserIdParams(
         const timeoutId = setTimeout(() => {
             pendingUserInfoRequests.delete(responseKey);
             reject(new Error("timeout in postMessage"));
-        }, 1000);
+        }, 3000);
 
         pendingUserInfoRequests.set(responseKey, (data) => {
             clearTimeout(timeoutId);

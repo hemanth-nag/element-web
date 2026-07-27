@@ -41,6 +41,10 @@ export default class WebPlatform extends BasePlatform {
     public constructor() {
         super();
 
+        if (navigator.serviceWorker) {
+            navigator.serviceWorker.addEventListener("message", this.onServiceWorkerPostMessage);
+        }
+
         // Register the service worker in the background
         this.registerServiceWorkerPromise = this.registerServiceWorker();
         this.registerServiceWorkerPromise.catch((e) => {
@@ -66,7 +70,6 @@ export default class WebPlatform extends BasePlatform {
             throw new Error("Service worker registration failed");
         }
 
-        navigator.serviceWorker.addEventListener("message", this.onServiceWorkerPostMessage);
         await registration.update();
     }
 
@@ -93,7 +96,7 @@ export default class WebPlatform extends BasePlatform {
             if (event.data?.["type"] === "userinfo" && event.data?.["responseKey"]) {
                 const userId = localStorage.getItem("mx_user_id");
                 const deviceId = localStorage.getItem("mx_device_id");
-                const homeserver = MatrixClientPeg.get()?.getHomeserverUrl();
+                const homeserver = localStorage.getItem("mx_hs_url") || MatrixClientPeg.get()?.getHomeserverUrl();
                 event.source!.postMessage({
                     responseKey: event.data["responseKey"],
                     userId,
