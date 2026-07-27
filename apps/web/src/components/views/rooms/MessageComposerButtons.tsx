@@ -29,7 +29,6 @@ import { _t } from "../../../languageHandler";
 import { CollapsibleButton } from "./CollapsibleButton";
 import { type MenuProps } from "../../structures/ContextMenu";
 import ErrorDialog from "../dialogs/ErrorDialog";
-import { LocationButton } from "../location";
 import Modal from "../../../Modal";
 import PollCreateDialog from "../elements/PollCreateDialog";
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
@@ -261,17 +260,7 @@ class PollButton extends React.PureComponent<IPollButtonProps> {
 }
 
 function showLocationButton(props: IProps, room: Room, matrixClient: MatrixClient): ReactElement | null {
-    const sender = room.getMember(matrixClient.getSafeUserId());
-
-    return props.showLocationButton && sender ? (
-        <LocationButton
-            key="location"
-            roomId={room.roomId}
-            relation={props.relation}
-            sender={sender}
-            menuPosition={props.menuPosition}
-        />
-    ) : null;
+    return null;
 }
 
 interface WysiwygToggleButtonProps {

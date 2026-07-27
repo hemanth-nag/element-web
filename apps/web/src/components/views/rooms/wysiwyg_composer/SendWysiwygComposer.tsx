@@ -8,8 +8,6 @@ Please see LICENSE files in the repository root for full details.
 
 import React, { type JSX, type RefObject, useMemo, type ReactNode } from "react";
 import { type IEventRelation } from "matrix-js-sdk/src/matrix";
-import LockOffIcon from "@vector-im/compound-design-tokens/assets/web/icons/lock-off";
-
 import { useWysiwygSendActionHandler } from "./hooks/useWysiwygSendActionHandler";
 import { WysiwygComposer } from "./components/WysiwygComposer";
 import { PlainTextComposer } from "./components/PlainTextComposer";
@@ -57,17 +55,7 @@ export default function SendWysiwygComposer({
     );
 
     let leftIcon: false | JSX.Element = false;
-    if (!e2eStatus) {
-        leftIcon = (
-            <LockOffIcon
-                data-testid="e2e-icon"
-                width={12}
-                height={12}
-                color="var(--cpd-color-icon-info-primary)"
-                className="mx_E2EIcon"
-            />
-        );
-    } else if (e2eStatus !== E2EStatus.Normal) {
+    if (e2eStatus && e2eStatus !== E2EStatus.Normal) {
         leftIcon = <E2EIcon status={e2eStatus} size={12} />;
     }
     return (

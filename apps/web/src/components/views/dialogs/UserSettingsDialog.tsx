@@ -211,16 +211,16 @@ export default function UserSettingsDialog(props: IProps): JSX.Element {
         //     ),
         // );
 
-        tabs.push(
-            new Tab(
-                UserTab.Encryption,
-                _td("settings|encryption|title"),
-                <KeyIcon />,
-                <EncryptionUserSettingsTab initialState={initialEncryptionState} />,
-                "UserSettingsEncryption",
-                showSetupRecoveryIndicator ? "mx_SettingsDialog_tabLabelsAlert" : undefined,
-            ),
-        );
+        // tabs.push(
+        //     new Tab(
+        //         UserTab.Encryption,
+        //         _td("settings|encryption|title"),
+        //         <KeyIcon />,
+        //         <EncryptionUserSettingsTab initialState={initialEncryptionState} />,
+        //         "UserSettingsEncryption",
+        //         showSetupRecoveryIndicator ? "mx_SettingsDialog_tabLabelsAlert" : undefined,
+        //     ),
+        // );
 
         // if (showLabsFlags() || SettingsStore.getFeatureSettingNames().some((k) => SettingsStore.getBetaInfo(k))) {
         //     tabs.push(

@@ -66,19 +66,12 @@ const EncryptionInfo: React.FC<IProps> = ({
         );
     }
 
-    let description: JSX.Element;
+    let description: JSX.Element | null = null;
     if (isRoomEncrypted) {
         description = (
             <div>
                 <p>{_t("user_info|room_encrypted")}</p>
                 <p>{_t("user_info|room_encrypted_detail")}</p>
-            </div>
-        );
-    } else {
-        description = (
-            <div>
-                <p>{_t("user_info|room_unencrypted")}</p>
-                <p>{_t("user_info|room_unencrypted_detail")}</p>
             </div>
         );
     }
@@ -89,10 +82,12 @@ const EncryptionInfo: React.FC<IProps> = ({
 
     return (
         <React.Fragment>
-            <div data-testid="encryption-info-description" className="mx_UserInfo_container">
-                <h3>{_t("settings|security|encryption_section")}</h3>
-                {description}
-            </div>
+            {description && (
+                <div data-testid="encryption-info-description" className="mx_UserInfo_container">
+                    <h3>{_t("settings|security|encryption_section")}</h3>
+                    {description}
+                </div>
+            )}
             <div className="mx_UserInfo_container">
                 <h3>{_t("user_info|verify_button")}</h3>
                 <div>

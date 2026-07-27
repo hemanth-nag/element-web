@@ -18,7 +18,7 @@ import {
 } from "matrix-js-sdk/src/matrix";
 import { Tooltip } from "@vector-im/compound-web";
 import { logger } from "matrix-js-sdk/src/logger";
-import { LockOffIcon, SendSolidIcon } from "@vector-im/compound-design-tokens/assets/web/icons";
+import { SendSolidIcon } from "@vector-im/compound-design-tokens/assets/web/icons";
 
 import { _t } from "../../../languageHandler";
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
@@ -529,21 +529,7 @@ export class MessageComposer extends React.Component<IProps, IState> {
     public render(): React.ReactNode {
         let leftIcon: false | JSX.Element = false;
         if (!this.state.isWysiwygLabEnabled) {
-            if (!this.props.e2eStatus) {
-                leftIcon = (
-                    <div className="mx_MessageComposer_e2eIconWrapper">
-                        <Tooltip label={_t("composer|room_unencrypted")}>
-                            <LockOffIcon
-                                aria-label={_t("composer|room_unencrypted")}
-                                width="12px"
-                                height="12px"
-                                color="var(--cpd-color-icon-info-primary)"
-                                className="mx_E2EIcon mx_MessageComposer_e2eIcon"
-                            />
-                        </Tooltip>
-                    </div>
-                );
-            } else if (this.props.e2eStatus !== E2EStatus.Normal) {
+            if (this.props.e2eStatus && this.props.e2eStatus !== E2EStatus.Normal) {
                 leftIcon = (
                     <div className="mx_MessageComposer_e2eIconWrapper">
                         <E2EIcon
@@ -695,9 +681,7 @@ export class MessageComposer extends React.Component<IProps, IState> {
                                     relation={this.props.relation}
                                     onRecordStartEndClick={this.onRecordStartEndClick}
                                     setStickerPickerOpen={this.setStickerPickerOpen}
-                                    showLocationButton={
-                                        !window.electron && SettingsStore.getValue(UIFeature.LocationSharing)
-                                    }
+                                    showLocationButton={false}
                                     showPollsButton={this.state.showPollsButton}
                                     showStickersButton={this.showStickersButton}
                                     isRichTextEnabled={this.state.isRichTextEnabled}

@@ -337,7 +337,6 @@ describe("SendWysiwygComposer", () => {
             it.each([
                 [E2EStatus.Verified, "Everyone in this room is verified"],
                 [E2EStatus.Warning, "Someone is using an unknown session"],
-                [undefined, undefined],
             ])("Should render left icon when e2eStatus is %s", async (e2eStatus, expectedLabel) => {
                 // When
                 customRender(jest.fn(), jest.fn(), false, isRichTextEnabled, undefined, e2eStatus);
@@ -346,14 +345,17 @@ describe("SendWysiwygComposer", () => {
                 // Then
                 expect(leftIcon).toBeInTheDocument();
                 expect(leftIcon).toHaveClass("mx_E2EIcon");
-                if (expectedLabel) {
-                    // eslint-disable-next-line jest/no-conditional-expect
-                    expect(leftIcon).toHaveAccessibleName(expectedLabel);
-                } else {
-                    // eslint-disable-next-line jest/no-conditional-expect
-                    expect(leftIcon.querySelector("svg")).not.toBeInTheDocument();
-                }
+                expect(leftIcon).toHaveAccessibleName(expectedLabel);
             });
+
+            it.each([undefined, E2EStatus.Normal])(
+                "Should not render left icon when e2eStatus is %s",
+                async (e2eStatus) => {
+                    customRender(jest.fn(), jest.fn(), false, isRichTextEnabled, undefined, e2eStatus);
+                    await waitFor(() => expect(screen.getByRole("textbox")).toHaveAttribute("contentEditable", "true"));
+                    expect(screen.queryByTestId("e2e-icon")).not.toBeInTheDocument();
+                },
+            );
         },
     );
 });

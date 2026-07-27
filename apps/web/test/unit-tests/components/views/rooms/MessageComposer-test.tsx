@@ -402,7 +402,7 @@ describe("MessageComposer", () => {
                     props.relation = { rel_type: THREAD_RELATION_TYPE.name };
                 });
 
-                checkPlaceholder("Reply to unencrypted thread…");
+                checkPlaceholder("Reply to thread…");
 
                 describe("with encryption", () => {
                     setEncrypted();

@@ -639,7 +639,7 @@
         "placeholder_encrypted": "Send a message…",
         "placeholder_reply": "Send a reply…",
         "placeholder_reply_encrypted": "Send a reply…",
-        "placeholder_thread": "Reply to unencrypted thread…",
+        "placeholder_thread": "Reply to thread…",
         "placeholder_thread_encrypted": "Reply to thread…",
         "poll_button": "Poll",
         "poll_button_no_perms_description": "You do not have permission to start polls in this room.",
