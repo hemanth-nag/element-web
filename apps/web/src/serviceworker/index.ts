@@ -56,11 +56,10 @@ global.addEventListener("fetch", (event: FetchEvent) => {
     // later on we need to proxy the request through if it turns out the server doesn't support authentication.
     event.respondWith(
         (async (): Promise<Response> => {
+            // Step 1: Acquire auth credentials. This is separated from /versions so that a /versions
+            // failure does NOT cause us to lose the access token we already successfully decrypted.
             let auth: { accessToken?: string; homeserver: string } | undefined;
             try {
-                // Figure out which homeserver we're communicating with
-                const csApi = url.origin;
-
                 // Add jitter to reduce request spam, particularly to `/versions` on initial page load
                 await new Promise<void>((resolve) => setTimeout(() => resolve(), Math.random() * 10));
 
@@ -68,30 +67,58 @@ global.addEventListener("fetch", (event: FetchEvent) => {
                 // @ts-expect-error - service worker types are not available. See 'fetch' event handler.
                 const client = await global.clients.get(event.clientId);
                 auth = await getAuthData(client);
-
-                // Is this request actually going to the homeserver?
-                const isRequestToHomeServer = url.origin === new URL(auth.homeserver).origin;
-                if (!isRequestToHomeServer) {
-                    throw new Error("Request appears to be for media endpoint but wrong homeserver!");
-                }
-
-                // Update or populate the server support map using a (usually) authenticated `/versions` call.
-                await tryUpdateServerSupportMap(csApi, auth.accessToken);
-
-                // If we have server support (and a means of authentication), rewrite the URL to use MSC3916 endpoints.
-                if (serverSupportMap[csApi].supportsAuthedMedia && auth.accessToken) {
-                    url.href = url.href.replace(/\/media\/v3\/(.*)\//, "/client/v1/media/$1/");
-                } // else by default we make no changes
             } catch (err) {
-                // In case of some error, we stay safe by not adding the access-token to the request.
-                auth = undefined;
-                console.error("SW: Error in request rewrite.", err);
+                console.error("SW: Error acquiring auth credentials.", err);
+                // Fall through — we'll try the request without auth
             }
 
-            // Add authentication and send the request. We add authentication even if MSC3916 endpoints aren't
+            // Step 2: Check server support and optionally rewrite the URL
+            const csApi = url.origin;
+            let urlRewritten = false;
+            if (auth?.accessToken) {
+                try {
+                    // Is this request actually going to the homeserver?
+                    const isRequestToHomeServer = url.origin === new URL(auth.homeserver).origin;
+                    if (!isRequestToHomeServer) {
+                        console.warn("SW: Request appears to be for media endpoint but wrong homeserver!");
+                    } else {
+                        // Update or populate the server support map using a (usually) authenticated `/versions` call.
+                        await tryUpdateServerSupportMap(csApi, auth.accessToken);
+
+                        // If we have server support, rewrite the URL to use MSC3916 endpoints.
+                        if (serverSupportMap[csApi]?.supportsAuthedMedia) {
+                            url.href = url.href.replace(/\/media\/v3\/(.*)\//, "/client/v1/media/$1/");
+                            urlRewritten = true;
+                        }
+                    }
+                } catch (err) {
+                    // /versions failed (network error, captive portal, etc.)
+                    // We still have valid auth credentials — DON'T throw them away.
+                    console.warn("SW: Error checking server support, proceeding with auth on original URL.", err);
+                }
+            }
+
+            // Step 3: Send the request. Add authentication even if MSC3916 endpoints aren't
             // being used to ensure patches like this work:
             // https://github.com/matrix-org/synapse/commit/2390b66bf0ec3ff5ffb0c7333f3c9b239eeb92bb
-            return fetch(url, fetchConfigForToken(auth?.accessToken));
+            const response = await fetch(url, fetchConfigForToken(auth?.accessToken));
+
+            // Step 4: If the old v3 endpoint returned 404 and we have auth but didn't rewrite the URL,
+            // the server likely requires the new authenticated media endpoints. Retry with rewriting.
+            if (response.status === 404 && auth?.accessToken && !urlRewritten) {
+                console.log(
+                    "[ServiceWorker] Got 404 on v3 media endpoint, retrying with authenticated v1 endpoint",
+                );
+                const authedUrl = new URL(event.request.url);
+                authedUrl.href = authedUrl.href.replace(/\/media\/v3\/(.*)\//, "/client/v1/media/$1/");
+
+                // Invalidate the server support map cache so the next request re-checks /versions
+                delete serverSupportMap[csApi];
+
+                return fetch(authedUrl, fetchConfigForToken(auth.accessToken));
+            }
+
+            return response;
         })(),
     );
 });
@@ -103,11 +130,42 @@ async function tryUpdateServerSupportMap(clientApiUrl: string, accessToken?: str
     }
 
     const config = fetchConfigForToken(accessToken);
-    const versions = await (await fetch(`${clientApiUrl}/_matrix/client/versions`, config)).json();
+    let versions: any;
+    try {
+        const resp = await fetch(`${clientApiUrl}/_matrix/client/versions`, config);
+        if (!resp.ok) {
+            throw new Error(`/versions returned HTTP ${resp.status}`);
+        }
+        versions = await resp.json();
+    } catch (err) {
+        // Network error, captive portal, or non-JSON response.
+        // Cache a short negative entry (30s) to avoid hammering /versions on every media request,
+        // but don't cache for 2 hours like a successful response.
+        console.warn(`[ServiceWorker] /versions call failed for '${clientApiUrl}':`, err);
+        serverSupportMap[clientApiUrl] = {
+            supportsAuthedMedia: false,
+            cacheExpiryTimeMs: new Date().getTime() + 30 * 1000, // retry in 30 seconds
+        };
+        throw err; // propagate so the caller knows /versions failed
+    }
+
+    // Validate that the response looks like a real /versions response
+    if (!versions || !Array.isArray(versions.versions)) {
+        console.warn(
+            `[ServiceWorker] /versions response for '${clientApiUrl}' is malformed:`,
+            JSON.stringify(versions),
+        );
+        serverSupportMap[clientApiUrl] = {
+            supportsAuthedMedia: false,
+            cacheExpiryTimeMs: new Date().getTime() + 30 * 1000, // retry in 30 seconds
+        };
+        throw new Error("Malformed /versions response");
+    }
+
     console.log(`[ServiceWorker] /versions response for '${clientApiUrl}': ${JSON.stringify(versions)}`);
 
     serverSupportMap[clientApiUrl] = {
-        supportsAuthedMedia: Boolean(versions?.versions?.includes("v1.11")),
+        supportsAuthedMedia: Boolean(versions.versions.includes("v1.11")),
         cacheExpiryTimeMs: new Date().getTime() + 2 * 60 * 60 * 1000, // 2 hours from now
     };
     console.log(
