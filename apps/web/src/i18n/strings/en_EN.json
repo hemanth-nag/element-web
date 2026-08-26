@@ -1419,7 +1419,7 @@
         "room_failed_partial_title": "Some invites couldn't be sent",
         "room_failed_title": "Failed to invite users to %(roomName)s",
         "send_link_prompt": "Or send invite link",
-        "start_conversation_name_email_mxid_prompt": "Start a conversation with someone using their name, email address or username (like <userId/>).",
+        "start_conversation_name_email_mxid_prompt": "Start a conversation with someone using their name or username (like <userId/>).",
         "start_conversation_name_mxid_prompt": "Start a conversation with someone using their name or username (like <userId/>).",
         "suggestions_disclaimer": "Some suggestions may be hidden for privacy.",
         "suggestions_disclaimer_prompt": "If you can't see who you're looking for, send them your invite link below.",
