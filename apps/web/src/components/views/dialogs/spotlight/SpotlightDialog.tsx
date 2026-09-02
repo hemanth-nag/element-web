@@ -325,7 +325,7 @@ interface IDirectoryOpts {
     query: string;
 }
 
-const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = null, onFinished }) => {
+const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = Filter.People, onFinished }) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const cli = MatrixClientPeg.safeGet();
