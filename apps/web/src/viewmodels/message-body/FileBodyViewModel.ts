@@ -107,8 +107,7 @@ function computedStyle(element: HTMLElement | null): string {
 
 export class FileBodyViewModel
     extends BaseViewModel<FileBodyViewSnapshot, FileBodyViewModelProps>
-    implements FileBodyViewModelInterface
-{
+    implements FileBodyViewModelInterface {
     private readonly refIFrame: RefObject<HTMLIFrameElement>;
     private readonly refLink: RefObject<HTMLAnchorElement>;
     private decryptedBlob?: Blob;
@@ -288,7 +287,10 @@ export class FileBodyViewModel
             tempAnchor.href = blobUrl;
             document.body.appendChild(tempAnchor);
             tempAnchor.click();
-            tempAnchor.remove();
+            setTimeout(() => {
+                tempAnchor.remove();
+                URL.revokeObjectURL(blobUrl);
+            }, 10000); // 10s delay to support extremely slow machines
         });
     };
 
