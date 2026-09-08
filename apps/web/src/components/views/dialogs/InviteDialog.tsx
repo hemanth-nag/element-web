@@ -225,9 +225,11 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             }
         }
 
+        const initialText = (this.props.initialText || "").replace(/([^@\s,]+)@[^\s,]+/g, "$1");
+
         this.state = {
             targets: [], // array of Member objects (see interface above)
-            filterText: this.props.initialText || "",
+            filterText: initialText,
             // Mutates alreadyInvited set so that buildSuggestions doesn't duplicate any users
             recents: InviteDialog.buildRecents(excludedIds),
             numRecentsShown: INITIAL_ROOMS_SHOWN,
@@ -251,8 +253,8 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
         this.unmounted = false;
         this.encryptionByDefault = privateShouldBeEncrypted(MatrixClientPeg.safeGet());
 
-        if (this.props.initialText) {
-            this.updateSuggestions(this.props.initialText);
+        if (this.state.filterText) {
+            this.updateSuggestions(this.state.filterText);
         }
     }
 
@@ -635,7 +637,8 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
     };
 
     private updateFilter = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        const term = e.target.value;
+        let term = e.target.value;
+        term = term.replace(/([^@\s,]+)@[^\s,]+/g, "$1");
         this.setState({ filterText: term });
 
         // Debounce server lookups to reduce spam. We don't clear the existing server
@@ -706,7 +709,8 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             return;
         }
 
-        const text = e.clipboardData.getData("text");
+        let text = e.clipboardData.getData("text");
+        text = text.replace(/([^@\s,]+)@[^\s,]+/g, "$1");
         const potentialAddresses = this.parseFilter(text);
         // one search term which is not a mxid or email address
         if (potentialAddresses.length === 1 && !potentialAddresses[0].includes("@")) {

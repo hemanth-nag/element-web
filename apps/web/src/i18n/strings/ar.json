@@ -1411,7 +1411,7 @@
     "room_failed_partial_title": "لم نتمكن من إرسال بعض الدعوات",
     "room_failed_title": "Failed to invite users to %(roomName)s",
     "send_link_prompt": "أو أرسل رابط الدعوة",
-    "start_conversation_name_email_mxid_prompt": "ابدأ محادثة مع شخص باستخدام اسمه أو اسم المستخدم الخاص به (<userId />، على سبيل المثال).",
+    "start_conversation_name_email_mxid_prompt": "ابدأ محادثة مع شخص باستخدام اسمه أو عنوان بريده الإلكتروني أو اسم المستخدم الخاص به (<userId />، على سبيل المثال).",
     "start_conversation_name_mxid_prompt": "ابدأ محادثة مع شخص باستخدام اسمه أو اسم المستخدم الخاص به (<userId />، على سبيل المثال).",
     "suggestions_disclaimer": "قد تكون بعض الاقتراحات مخفية لأسباب تتعلق بالخصوصية.",
     "suggestions_disclaimer_prompt": "إذا لم تتمكن من رؤية الشخص الذي تبحث عنه، أرسل له رابط الدعوة أدناه.",

@@ -330,7 +330,7 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = F
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const cli = MatrixClientPeg.safeGet();
     const rovingContext = useContext(RovingTabIndexContext);
-    const [query, _setQuery] = useState(initialText);
+    const [query, _setQuery] = useState(initialText ? initialText.replace(/([^@\s,]+)@[^\s,]+/g, "$1") : "");
     const [recentSearches, clearRecentSearches] = useRecentSearches();
     const [filter, setFilterInternal] = useState<Filter | null>(initialFilter);
     const setFilter = useCallback((filter: Filter | null) => {
@@ -529,7 +529,8 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = F
     const [spaceResults, spaceResultsLoading] = useSpaceResults(activeSpace ?? undefined, query);
 
     const setQuery = (e: ChangeEvent<HTMLInputElement>): void => {
-        const newQuery = transformSearchTerm(e.currentTarget.value);
+        let newQuery = transformSearchTerm(e.currentTarget.value);
+        newQuery = newQuery.replace(/([^@\s,]+)@[^\s,]+/g, "$1");
         _setQuery(newQuery);
     };
     useEffect(() => {
