@@ -24,7 +24,7 @@ import SecurityRecommendations from "../../devices/SecurityRecommendations";
 import { type ExtendedDevice } from "../../devices/types";
 import { deleteDevicesWithInteractiveAuth } from "../../devices/deleteDevices";
 import SettingsTab from "../SettingsTab";
-import LoginWithQRSection from "../../devices/LoginWithQRSection";
+// import LoginWithQRSection from "../../devices/LoginWithQRSection";
 import { Mode } from "../../../auth/LoginWithQR-types";
 import { useAsyncMemo } from "../../../../../hooks/useAsyncMemo";
 import QuestionDialog from "../../../dialogs/QuestionDialog";
@@ -163,10 +163,10 @@ const SessionManagerTab: React.FC<{
     const disableMultipleSignout = !!accountManagement?.endpoint;
     const userId = matrixClient?.getUserId();
     const currentUserMember = (userId && matrixClient?.getUser(userId)) || undefined;
-    const isCrossSigningReady = useAsyncMemo(
-        async () => matrixClient.getCrypto()?.isCrossSigningReady() ?? false,
-        [matrixClient],
-    );
+    // const isCrossSigningReady = useAsyncMemo(
+    //     async () => matrixClient.getCrypto()?.isCrossSigningReady() ?? false,
+    //     [matrixClient],
+    // );
 
     const onDeviceExpandToggle = (deviceId: ExtendedDevice["device_id"]): void => {
         if (expandedDeviceIds.includes(deviceId)) {
@@ -257,9 +257,9 @@ const SessionManagerTab: React.FC<{
         setSignInWithQrMode(null);
     }, [setSignInWithQrMode]);
 
-    const onShowQrClicked = useCallback(() => {
-        setSignInWithQrMode(Mode.Show);
-    }, [setSignInWithQrMode]);
+    // const onShowQrClicked = useCallback(() => {
+    //     setSignInWithQrMode(Mode.Show);
+    // }, [setSignInWithQrMode]);
 
     if (signInWithQrMode) {
         return (
@@ -277,7 +277,7 @@ const SessionManagerTab: React.FC<{
     return (
         <SettingsTab>
             <SettingsSection>
-                <LoginWithQRSection onShowQr={onShowQrClicked} isCrossSigningReady={isCrossSigningReady} />
+                {/* <LoginWithQRSection onShowQr={onShowQrClicked} isCrossSigningReady={isCrossSigningReady} /> */}
                 <SecurityRecommendations
                     devices={devices}
                     goToFilteredList={onGoToFilteredList}

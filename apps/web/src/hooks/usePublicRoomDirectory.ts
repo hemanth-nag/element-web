@@ -60,7 +60,7 @@ export const usePublicRoomDirectory = (): {
 
     const [updateQuery, updateResult] = useLatestResult<IRoomDirectoryOptions, IPublicRoomsChunkRoom[]>(setPublicRooms);
 
-    const showNsfwPublicRooms = useSettingValue("SpotlightSearch.showNsfwPublicRooms");
+    const showNsfwPublicRooms = false; // useSettingValue("SpotlightSearch.showNsfwPublicRooms");
 
     async function initProtocols(): Promise<void> {
         if (!MatrixClientPeg.get()) {

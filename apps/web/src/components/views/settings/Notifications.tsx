@@ -352,6 +352,7 @@ export default class Notifications extends React.PureComponent<EmptyObject, ISta
             preparedNewState.vectorPushRules[category] = [];
             for (const rule of defaultRules[category]) {
                 const definition: VectorPushRuleDefinition = VectorPushRulesDefinitions[rule.rule_id];
+                if (!definition) continue;
                 const vectorState = definition.ruleToVectorState(rule)!;
                 preparedNewState.vectorPushRules[category]!.push({
                     ruleId: rule.rule_id,
@@ -505,6 +506,7 @@ export default class Notifications extends React.PureComponent<EmptyObject, ISta
                 }
             } else {
                 const definition: VectorPushRuleDefinition = VectorPushRulesDefinitions[rule.ruleId];
+                if (!definition) return;
                 const actions = definition.vectorStateToActions[checkedState];
                 // we should not encounter this
                 // satisfies types

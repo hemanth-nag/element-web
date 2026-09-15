@@ -163,7 +163,7 @@ export default class PreferencesUserSettingsTab extends React.Component<IProps, 
         "useOnlyCurrentProfiles",
     ];
 
-    private static ROOM_DIRECTORY_SETTINGS: BooleanSettingKey[] = ["SpotlightSearch.showNsfwPublicRooms"];
+    // private static ROOM_DIRECTORY_SETTINGS: BooleanSettingKey[] = ["SpotlightSearch.showNsfwPublicRooms"];
 
     private static GENERAL_SETTINGS: BooleanSettingKey[] = [
         "promptBeforeInviteUnknownUsers",
@@ -372,9 +372,9 @@ export default class PreferencesUserSettingsTab extends React.Component<IProps, 
                         <InviteRulesAccountSetting />
                     </SettingsSubsection>
 
-                    <SettingsSubsection heading={_t("settings|preferences|room_directory_heading")} formWrap>
+                    {/* <SettingsSubsection heading={_t("settings|preferences|room_directory_heading")} formWrap>
                         {this.renderGroup(PreferencesUserSettingsTab.ROOM_DIRECTORY_SETTINGS)}
-                    </SettingsSubsection>
+                    </SettingsSubsection> */}
 
                     {/* <SettingsSubsection heading={_t("common|general")} stretchContent formWrap>
                         {this.renderGroup(PreferencesUserSettingsTab.GENERAL_SETTINGS)}

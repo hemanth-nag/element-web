@@ -61,7 +61,7 @@
         "explore_rooms": "Explore rooms",
         "export": "Export",
         "forward": "Forward",
-        "go": "Go",
+        "go": "Start",
         "go_back": "Go back",
         "got_it": "Got it",
         "hide_advanced": "Hide advanced",
@@ -219,8 +219,8 @@
         "log_in_new_account": "<a>Log in</a> to your new account.",
         "logout_dialog": {
             "description": "Are you sure you want to remove this device?",
-            "setup_key_backup_title": "You're about to lose access to your encrypted chats",
-            "setup_secure_backup_description": "This is your only device. If you remove it you'll need a recovery key in order to confirm your digital identity and restore your encrypted chats the next time you sign in.",
+            "setup_key_backup_title": "You're about to logout from this device.",
+            "setup_secure_backup_description": "This is your only device. If you remove it you'll need a recovery key in order to confirm your digital identity",
             "skip_key_backup": "Remove this device anyway"
         },
         "misconfigured_body": "Ask your %(brand)s admin to check <a>your config</a> for incorrect or duplicate entries.",

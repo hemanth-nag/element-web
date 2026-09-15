@@ -135,14 +135,14 @@ export const VectorPushRulesDefinitions: Record<string, VectorPushRuleDefinition
     }),
 
     // Encrypted messages just sent to the user in a 1:1 room
-    ".m.rule.encrypted_room_one_to_one": new VectorPushRuleDefinition({
+    /* ".m.rule.encrypted_room_one_to_one": new VectorPushRuleDefinition({
         description: _td("settings|notifications|rule_encrypted_room_one_to_one"), // passed through _t() translation in src/components/views/settings/Notifications.js
         vectorStateToActions: {
             [VectorState.On]: StandardActions.ACTION_NOTIFY,
             [VectorState.Loud]: StandardActions.ACTION_NOTIFY_DEFAULT_SOUND,
             [VectorState.Off]: StandardActions.ACTION_DONT_NOTIFY,
         },
-    }),
+    }), */
 
     // Messages just sent to a group chat room
     // 1:1 room messages are caught by the .m.rule.room_one_to_one rule if any defined
@@ -160,14 +160,14 @@ export const VectorPushRulesDefinitions: Record<string, VectorPushRuleDefinition
     // Encrypted messages just sent to a group chat room
     // Encrypted 1:1 room messages are caught by the .m.rule.encrypted_room_one_to_one rule if any defined
     // By opposition, all other room messages are from group chat rooms.
-    ".m.rule.encrypted": new VectorPushRuleDefinition({
+    /* ".m.rule.encrypted": new VectorPushRuleDefinition({
         description: _td("settings|notifications|rule_encrypted"), // passed through _t() translation in src/components/views/settings/Notifications.js
         vectorStateToActions: {
             [VectorState.On]: StandardActions.ACTION_NOTIFY,
             [VectorState.Loud]: StandardActions.ACTION_NOTIFY_DEFAULT_SOUND,
             [VectorState.Off]: StandardActions.ACTION_DONT_NOTIFY,
         },
-    }),
+    }), */
 
     // Invitation for the user
     ".m.rule.invite_for_me": new VectorPushRuleDefinition({

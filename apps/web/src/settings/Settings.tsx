@@ -298,7 +298,7 @@ export interface Settings {
     "recent_emoji": IBaseSetting<RecentEmojiData>;
     "showMediaEventIds": IBaseSetting<{ [eventId: string]: boolean }>;
     "SpotlightSearch.recentSearches": IBaseSetting<string[]>;
-    "SpotlightSearch.showNsfwPublicRooms": IBaseSetting<boolean>;
+    // "SpotlightSearch.showNsfwPublicRooms": IBaseSetting<boolean>;
     "room_directory_servers": IBaseSetting<string[]>;
     "integrationProvisioning": IBaseSetting<boolean>;
     "allowedWidgets": IBaseSetting<{ [eventId: string]: boolean }>;
@@ -1090,11 +1090,11 @@ export const SETTINGS: Settings = {
         // Exports event IDs
         shouldExportToRageshake: false,
     },
-    "SpotlightSearch.showNsfwPublicRooms": {
+    /* "SpotlightSearch.showNsfwPublicRooms": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td("settings|show_nsfw_content"),
         default: false,
-    },
+    }, */
     "room_directory_servers": {
         supportedLevels: [SettingLevel.ACCOUNT],
         default: [],

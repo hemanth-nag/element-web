@@ -157,7 +157,7 @@ class RoomSettingsDialog extends React.Component<IProps, IState> {
                 ),
             );
         }
-        if (SettingsStore.getValue("feature_group_calls")) {
+        /* if (SettingsStore.getValue("feature_group_calls")) {
             tabs.push(
                 new Tab(
                     RoomSettingsTab.Voip,
@@ -166,7 +166,7 @@ class RoomSettingsDialog extends React.Component<IProps, IState> {
                     <VoipRoomSettingsTab room={this.state.room} />,
                 ),
             );
-        }
+        } */
         tabs.push(
             new Tab(
                 RoomSettingsTab.Security,
@@ -219,7 +219,7 @@ class RoomSettingsDialog extends React.Component<IProps, IState> {
             ),
         );
 
-        if (SettingsStore.getValue(UIFeature.AdvancedSettings)) {
+        /* if (SettingsStore.getValue(UIFeature.AdvancedSettings)) {
             tabs.push(
                 new Tab(
                     RoomSettingsTab.Advanced,
@@ -232,7 +232,7 @@ class RoomSettingsDialog extends React.Component<IProps, IState> {
                     "RoomSettingsAdvanced",
                 ),
             );
-        }
+        } */
 
         return tabs as NonEmptyArray<Tab<RoomSettingsTab>>;
     }

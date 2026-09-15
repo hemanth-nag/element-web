@@ -99,6 +99,7 @@ export const Commands = [
         },
         category: CommandCategories.messages,
     }),
+    /*
     upgraderoom,
     new Command({
         command: "jumptodate",
@@ -633,6 +634,7 @@ export const Commands = [
         category: CommandCategories.advanced,
         renderingTypes: [TimelineRenderingType.Room],
     }),
+    */
     new Command({
         command: "rainbow",
         description: _td("slash_command|rainbow"),
@@ -653,6 +655,7 @@ export const Commands = [
         },
         category: CommandCategories.messages,
     }),
+    /*
     new Command({
         command: "help",
         description: _td("slash_command|help"),
@@ -822,6 +825,7 @@ export const Commands = [
         renderingTypes: [TimelineRenderingType.Room],
     }),
     statusCommand,
+    */
 
     // Command definitions for autocompletion ONLY:
     // /me is special because its not handled by SlashCommands.js and is instead done inside the Composer classes
