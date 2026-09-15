@@ -180,4 +180,26 @@ export class OidcClientStore {
             logger.error("Failed to initialise OidcClientStore", error);
         }
     }
+
+    /**
+     * Generate the OIDC end_session_endpoint URL for MAS logout
+     */
+    public async generateOidcSignoutUrl(): Promise<string | undefined> {
+        const client = await this.getOidcClient();
+        if (!client) {
+            return undefined;
+        }
+
+        try {
+            const idTokenHint = getStoredOidcIdToken();
+            const request = await client.createSignoutRequest({
+                id_token_hint: idTokenHint,
+                post_logout_redirect_uri: window.location.origin,
+            });
+            return request.url;
+        } catch (error) {
+            logger.error("Failed to generate OIDC signout request", error);
+            return undefined;
+        }
+    }
 }

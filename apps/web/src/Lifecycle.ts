@@ -980,6 +980,7 @@ async function persistCredentials(credentials: IMatrixClientCreds): Promise<void
 }
 
 let _isLoggingOut = false;
+let dynamicLogoutUrl: string | undefined;
 
 /**
  * Logs out the current session.
@@ -989,9 +990,12 @@ let _isLoggingOut = false;
  * @param oidcClientStore
  */
 async function doLogout(client: MatrixClient, oidcClientStore?: OidcClientStore): Promise<void> {
+    dynamicLogoutUrl = undefined;
     if (oidcClientStore?.isUserAuthenticatedWithOidc) {
         const accessToken = client.getAccessToken() ?? undefined;
         const refreshToken = client.getRefreshToken() ?? undefined;
+
+        dynamicLogoutUrl = await oidcClientStore.generateOidcSignoutUrl();
 
         await oidcClientStore.revokeTokens(accessToken, refreshToken);
     } else {
@@ -1157,11 +1161,12 @@ export async function onLoggedOut(): Promise<void> {
 
     // Do this last, so we can make sure all storage has been cleared and all
     // customisations got the memo.
-    if (SdkConfig.get().logout_redirect_url) {
+    const redirectUrl = dynamicLogoutUrl || SdkConfig.get().logout_redirect_url;
+    if (redirectUrl) {
         logger.log("Redirecting to external provider to finish logout");
         // XXX: Defer this so that it doesn't race with MatrixChat unmounting the world by going to /#/welcome
         window.setTimeout(() => {
-            window.location.href = SdkConfig.get().logout_redirect_url!;
+            window.location.href = redirectUrl;
         }, 100);
     }
     // Do this last to prevent racing `stopMatrixClient` and `on_logged_out` with MatrixChat handling Session.logged_out
