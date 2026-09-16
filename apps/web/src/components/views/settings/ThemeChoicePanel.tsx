@@ -163,7 +163,7 @@ function ThemeSelectors({ theme, disabled }: ThemeSelectorProps): JSX.Element {
 /**
  * Return all the available themes
  */
-function useThemes(): Array<ITheme & { isDark: boolean }> {
+export function useThemes(): Array<ITheme & { isDark: boolean }> {
     const customThemes = useSettingValue("custom_themes");
     return useMemo(() => {
         // Put the custom theme into a map

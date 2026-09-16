@@ -251,7 +251,17 @@ export class SpaceStoreClass extends AsyncStoreWithClient<EmptyObject> {
      * should not be done when the space switch is done implicitly due to another event like switching room.
      */
     public setActiveSpace(space: SpaceKey, contextSwitch = true): void {
-        if (!space || !this.matrixClient || space === this.activeSpace) return;
+        if (!space || !this.matrixClient) return;
+
+        if (space === this.activeSpace) {
+            if (contextSwitch && space === MetaSpace.Home) {
+                defaultDispatcher.dispatch<ViewHomePagePayload>({
+                    action: Action.ViewHomePage,
+                    context_switch: true,
+                });
+            }
+            return;
+        }
 
         let cliSpace: Room | null = null;
         if (ModuleApi.instance.extras.spacePanelItems.has(space)) {

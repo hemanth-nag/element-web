@@ -6,11 +6,12 @@ SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Com
 Please see LICENSE files in the repository root for full details.
 */
 
-import React, { type ReactElement, useMemo } from "react";
+import React, { type ReactElement } from "react";
 
 import { _t } from "../../../languageHandler";
 import { Action } from "../../../dispatcher/actions";
-import { findNonHighContrastTheme, getOrderedThemes } from "../../../theme";
+import { findNonHighContrastTheme } from "../../../theme";
+import { useThemes } from "../settings/ThemeChoicePanel";
 import Dropdown from "../elements/Dropdown";
 import SettingsStore from "../../../settings/SettingsStore";
 import { SettingLevel } from "../../../settings/SettingLevel";
@@ -27,7 +28,7 @@ type Props = {
 const MATCH_SYSTEM_THEME_ID = "MATCH_SYSTEM_THEME_ID";
 
 const QuickThemeSwitcher: React.FC<Props> = ({ requestClose }) => {
-    const orderedThemes = useMemo(() => getOrderedThemes(), []);
+    const orderedThemes = useThemes();
 
     const themeState = useTheme();
     const nonHighContrast = findNonHighContrastTheme(themeState.theme);

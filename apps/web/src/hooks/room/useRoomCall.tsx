@@ -35,7 +35,7 @@ import { CallStore, CallStoreEvent } from "../../stores/CallStore";
 import { isVideoRoom } from "../../utils/video-rooms";
 import { UIFeature } from "../../settings/UIFeature";
 import { type InteractionName } from "../../PosthogTrackers";
-import { ElementCallMemberEventType } from "../../call-types";
+import { ElementCallEventType } from "../../call-types";
 import { LocalRoom, LocalRoomState } from "../../models/LocalRoom";
 import { useScopedRoomContext } from "../../contexts/ScopedRoomContext";
 import { SdkContextClass } from "../../contexts/SDKContext";
@@ -166,7 +166,7 @@ export const useRoomCall = (
 
     const [mayEditWidgets, mayCreateElementCallState] = useRoomState(room, () => [
         room.currentState.mayClientSendStateEvent("im.vector.modular.widgets", room.client),
-        room.currentState.mayClientSendStateEvent(ElementCallMemberEventType.name, room.client),
+        room.currentState.mayClientSendStateEvent(ElementCallEventType.name, room.client),
     ]);
 
     const mayCreateElementCalls = mayCreateElementCallState && serverIsConfiguredForElementCall;
