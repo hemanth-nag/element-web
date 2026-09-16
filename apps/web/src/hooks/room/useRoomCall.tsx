@@ -35,7 +35,7 @@ import { CallStore, CallStoreEvent } from "../../stores/CallStore";
 import { isVideoRoom } from "../../utils/video-rooms";
 import { UIFeature } from "../../settings/UIFeature";
 import { type InteractionName } from "../../PosthogTrackers";
-import { ElementCallEventType } from "../../call-types";
+import { ElementCallEventType, ElementCallMemberEventType } from "../../call-types";
 import { LocalRoom, LocalRoomState } from "../../models/LocalRoom";
 import { useScopedRoomContext } from "../../contexts/ScopedRoomContext";
 import { SdkContextClass } from "../../contexts/SDKContext";
@@ -164,12 +164,14 @@ export const useRoomCall = (
     // room
     const memberCount = useRoomMemberCount(room);
 
-    const [mayEditWidgets, mayCreateElementCallState] = useRoomState(room, () => [
+    const [mayEditWidgets, mayCreateElementCallState, mayJoinElementCallState] = useRoomState(room, () => [
         room.currentState.mayClientSendStateEvent("im.vector.modular.widgets", room.client),
         room.currentState.mayClientSendStateEvent(ElementCallEventType.name, room.client),
+        room.currentState.mayClientSendStateEvent(ElementCallMemberEventType.name, room.client),
     ]);
 
     const mayCreateElementCalls = mayCreateElementCallState && serverIsConfiguredForElementCall;
+    const mayJoinElementCalls = mayJoinElementCallState && serverIsConfiguredForElementCall;
 
     // The options provided to the RoomHeader.
     // If there are multiple options, the user will be prompted to choose.
@@ -241,7 +243,8 @@ export const useRoomCall = (
             return State.Ongoing;
         }
 
-        if (!callOptions.includes(PlatformCallType.LegacyCall) && !mayCreateElementCalls && !mayEditWidgets) {
+        const canStartOrJoinElementCall = (hasGroupCall && mayJoinElementCalls) || mayCreateElementCalls;
+        if (!callOptions.includes(PlatformCallType.LegacyCall) && !canStartOrJoinElementCall && !mayEditWidgets) {
             return State.NoPermission;
         }
         // Catch-all for just not having any call options available.
@@ -257,6 +260,7 @@ export const useRoomCall = (
         hasLegacyCall,
         hasManagedHybridWidget,
         mayCreateElementCalls,
+        mayJoinElementCalls,
         mayEditWidgets,
         promptPinWidget,
         room.roomId,
