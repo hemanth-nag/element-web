@@ -49,8 +49,8 @@ const plEventsToShow: Record<string, IEventShowOpts> = {
     [EventType.RoomHistoryVisibility]: { isState: true, hideForSpace: true },
     [EventType.RoomPowerLevels]: { isState: true },
     [EventType.RoomTopic]: { isState: true },
-    [EventType.RoomTombstone]: { isState: true, hideForSpace: true },
-    [EventType.RoomEncryption]: { isState: true, hideForSpace: true },
+    // [EventType.RoomTombstone]: { isState: true, hideForSpace: true },
+    // [EventType.RoomEncryption]: { isState: true, hideForSpace: true },
     [EventType.RoomServerAcl]: { isState: true, hideForSpace: true },
     [EventType.RoomPinnedEvents]: { isState: true, hideForSpace: true },
     [EventType.Reaction]: { isState: false, hideForSpace: true },
@@ -264,8 +264,8 @@ export default class RolesRoomSettingsTab extends React.Component<IProps, RolesR
             [EventType.RoomTopic]: isSpaceRoom
                 ? _td("room_settings|permissions|m.room.topic_space")
                 : _td("room_settings|permissions|m.room.topic"),
-            // [EventType.RoomTombstone]: _td("room_settings|permissions|m.room.tombstone"),
-            // [EventType.RoomEncryption]: _td("room_settings|permissions|m.room.encryption"),
+            [EventType.RoomTombstone]: _td("room_settings|permissions|m.room.tombstone"),
+            [EventType.RoomEncryption]: _td("room_settings|permissions|m.room.encryption"),
             [EventType.RoomServerAcl]: _td("room_settings|permissions|m.room.server_acl"),
             [EventType.Reaction]: _td("room_settings|permissions|m.reaction"),
             [EventType.RoomRedaction]: _td("room_settings|permissions|m.room.redaction"),
