@@ -252,6 +252,14 @@ export class MessageComposer extends React.Component<IProps, IState> {
         this.updateRecordingState(); // grab any cached recordings
     }
 
+    public componentDidUpdate(prevProps: IProps): void {
+        const prevVoiceRecordingId = VoiceRecordingStore.getVoiceRecordingId(prevProps.room, prevProps.relation);
+        const newVoiceRecordingId = VoiceRecordingStore.getVoiceRecordingId(this.props.room, this.props.relation);
+        if (prevVoiceRecordingId !== newVoiceRecordingId) {
+            this.updateRecordingState();
+        }
+    }
+
     private onResize = (type: UI_EVENTS, entry: ResizeObserverEntry): void => {
         if (type === UI_EVENTS.Resize) {
             const { narrow } = this.context;
@@ -454,7 +462,7 @@ export class MessageComposer extends React.Component<IProps, IState> {
         this.voiceRecording = VoiceRecordingStore.instance.getActiveRecording(voiceRecordingId);
         if (this.voiceRecording) {
             // If the recording has already started, it's probably a cached one.
-            if (this.voiceRecording.hasRecording && !this.voiceRecording.isRecording) {
+            if (this.voiceRecording.hasRecording || this.voiceRecording.isRecording) {
                 this.setState({ haveRecording: true });
             }
 

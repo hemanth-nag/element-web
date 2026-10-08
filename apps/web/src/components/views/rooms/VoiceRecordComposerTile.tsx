@@ -76,6 +76,23 @@ export default class VoiceRecordComposerTile extends React.PureComponent<IProps,
         }
     }
 
+    public componentDidUpdate(prevProps: IProps): void {
+        const newVoiceRecordingId = VoiceRecordingStore.getVoiceRecordingId(this.props.room, this.props.relation);
+        if (this.voiceRecordingId !== newVoiceRecordingId) {
+            if (this.state.recorder && this.state.recorder.isRecording) {
+                // noinspection JSIgnoredPromiseFromCall
+                this.state.recorder.stop();
+            }
+            this.voiceRecordingId = newVoiceRecordingId;
+            const recorder = VoiceRecordingStore.instance.getActiveRecording(this.voiceRecordingId);
+            this.bindNewRecorder(recorder ?? null);
+            this.setState({
+                recorder: recorder ?? undefined,
+                recordingPhase: recorder ? (recorder.isRecording ? RecordingState.Started : RecordingState.Ended) : undefined,
+            });
+        }
+    }
+
     public async componentWillUnmount(): Promise<void> {
         // Stop recording, but keep the recording memory (don't dispose it). This is to let the user
         // come back and finish working with it.

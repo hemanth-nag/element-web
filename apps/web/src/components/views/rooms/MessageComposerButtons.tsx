@@ -89,6 +89,7 @@ const MessageComposerButtons: React.FC<IProps> = (props: IProps) => {
             ) : (
                 emojiButton(props)
             ),
+            voiceRecordingButton(props, narrow),
         ];
         moreButtons = [
             // This a textual list of buttons, so we can't use the UploadButton here.
@@ -101,7 +102,6 @@ const MessageComposerButtons: React.FC<IProps> = (props: IProps) => {
                 />
             )),
             showStickersButton(props),
-            voiceRecordingButton(props, narrow),
             props.showPollsButton ? pollButton(room, props.relation) : null,
             showLocationButton(props, room, matrixClient),
         ];
@@ -117,10 +117,10 @@ const MessageComposerButtons: React.FC<IProps> = (props: IProps) => {
                 emojiButton(props)
             ),
             <UploadButton key="upload" vm={roomUploadVM} />,
+            voiceRecordingButton(props, narrow),
         ];
         moreButtons = [
             showStickersButton(props),
-            voiceRecordingButton(props, narrow),
             props.showPollsButton ? pollButton(room, props.relation) : null,
             showLocationButton(props, room, matrixClient),
         ];
@@ -189,8 +189,8 @@ function showStickersButton(props: IProps): ReactElement | null {
 }
 
 function voiceRecordingButton(props: IProps, narrow: boolean): ReactElement | null {
-    // XXX: recording UI does not work well in narrow mode, so hide for now
-    return narrow ? null : (
+    // XXX: recording UI might not work well in narrow mode, but we show it anyway
+    return (
         <CollapsibleButton
             key="voice_message_send"
             className="mx_MessageComposer_button"
