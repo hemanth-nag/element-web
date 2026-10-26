@@ -128,6 +128,14 @@ Please see LICENSE files in the repository root for full details.
         }
     }
 
+    .mx_WhoIsTypingTile {
+        margin-left: -12px; /* undo padding on the message list */
+    }
+
+    .mx_WhoIsTypingTile_avatars {
+        flex-basis: 48px; /* 12 (padding on message list) + 36 (padding on event lines) */
+    }
+
     .mx_MessageComposer {
         background-color: $background;
         border-radius: 8px;

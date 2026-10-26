@@ -1046,7 +1046,8 @@ export default class MessagePanel extends React.Component<IProps, IState> {
         if (
             this.props.room &&
             this.state.showTypingNotifications &&
-            this.context.timelineRenderingType === TimelineRenderingType.Room
+            (this.context.timelineRenderingType === TimelineRenderingType.Room ||
+                this.context.timelineRenderingType === TimelineRenderingType.Thread)
         ) {
             whoIsTyping = (
                 <WhoIsTypingTile
