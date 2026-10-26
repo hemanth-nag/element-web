@@ -47,6 +47,7 @@ import { type WidgetMessaging, WidgetMessagingEvent } from "../stores/widgets/Wi
 import { BugReportEndpointURLLocal } from "../IConfigOptions.ts";
 
 const TIMEOUT_MS = 16000;
+const WIDGET_START_TIMEOUT_MS = 45000;
 const logger = rootLogger.getChild("models/Call");
 
 // Waits until an event is emitted satisfying the given predicate
@@ -125,6 +126,7 @@ export abstract class Call extends TypedEventEmitter<CallEvent, CallEventHandler
     public abstract readonly STUCK_DEVICE_TIMEOUT_MS: number;
 
     private _widgetApi: ClientWidgetApi | null = null;
+    private startPromise: Promise<ClientWidgetApi> | null = null;
     /**
      * The widget API interface to the widget, or null if disconnected.
      */
@@ -220,54 +222,83 @@ export abstract class Call extends TypedEventEmitter<CallEvent, CallEventHandler
      * @returns The ClientWidgetApi for this call.
      */
     public async start(_params?: WidgetGenerationParameters): Promise<ClientWidgetApi> {
-        const messagingStore = WidgetMessagingStore.instance;
-        const startTime = performance.now();
-        let messaging: WidgetMessaging | undefined = messagingStore.getMessagingForUid(this.widgetUid);
-        // The widget might still be initializing, so wait for it in an async
-        // event loop. We need the messaging to be both present and started
-        // (have a connected widget API), so register listeners for both cases.
-        while (!messaging?.widgetApi) {
-            if (messaging) logger.debug(`Messaging present but not yet started for ${this.widgetUid}`);
-            else logger.debug(`No messaging yet for ${this.widgetUid}`);
-            const recheck = Promise.withResolvers<void>();
-            const currentMessaging = messaging;
+        if (this.widgetApi) return this.widgetApi;
+        if (this.startPromise) return this.startPromise;
 
-            // Maybe the messaging is present but not yet started. In this case,
-            // check again for a widget API as soon as it starts.
-            const onStart = (): void => recheck.resolve();
-            currentMessaging?.on(WidgetMessagingEvent.Start, onStart);
+        this.startPromise = (async () => {
+            const messagingStore = WidgetMessagingStore.instance;
+            const startTime = performance.now();
+            let messaging: WidgetMessaging | undefined = messagingStore.getMessagingForUid(this.widgetUid);
+            // The widget might still be initializing, so wait for it in an async
+            // event loop. We need the messaging to be both present and started
+            // (have a connected widget API), so register listeners for both cases.
+            while (!messaging?.widgetApi) {
+                if (messaging) logger.debug(`Messaging present but not yet started for ${this.widgetUid}`);
+                else logger.debug(`No messaging yet for ${this.widgetUid}`);
+                const recheck = Promise.withResolvers<void>();
+                const currentMessaging = messaging;
 
-            // Maybe the messaging is not present at all. It's also entirely
-            // possible (as shown in React strict mode) that the messaging could
-            // be abandoned and replaced by an entirely new messaging object
-            // while we were waiting for the original one to start. We need to
-            // react to store updates in either case.
-            const onStoreMessaging = (uid: string, m: WidgetMessaging): void => {
-                if (uid === this.widgetUid) {
-                    messagingStore.off(WidgetMessagingStoreEvent.StoreMessaging, onStoreMessaging);
-                    messaging = m; // Check the new messaging object on the next iteration of the loop
+                // Maybe the messaging is present but not yet started. In this case,
+                // check again for a widget API as soon as it starts.
+                const onStart = (): void => recheck.resolve();
+                const onStop = (): void => {
+                    messaging = undefined;
                     recheck.resolve();
+                };
+                currentMessaging?.on(WidgetMessagingEvent.Start, onStart);
+                currentMessaging?.on(WidgetMessagingEvent.Stop, onStop);
+
+                // Maybe the messaging is not present at all. It's also entirely
+                // possible (as shown in React strict mode) that the messaging could
+                // be abandoned and replaced by an entirely new messaging object
+                // while we were waiting for the original one to start. We need to
+                // react to store updates in either case.
+                const onStoreMessaging = (uid: string, m: WidgetMessaging): void => {
+                    if (uid === this.widgetUid) {
+                        messaging = m; // Check the new messaging object on the next iteration of the loop
+                        recheck.resolve();
+                    }
+                };
+                const onStopMessaging = (uid: string): void => {
+                    if (uid === this.widgetUid) {
+                        messaging = undefined;
+                        recheck.resolve();
+                    }
+                };
+                messagingStore.on(WidgetMessagingStoreEvent.StoreMessaging, onStoreMessaging);
+                messagingStore.on(WidgetMessagingStoreEvent.StopMessaging, onStopMessaging);
+
+                const remainingTime = WIDGET_START_TIMEOUT_MS - (performance.now() - startTime);
+                if (remainingTime <= 0) {
+                    throw new Error(`Widget for call in ${this.roomId} not started; timed out`);
                 }
-            };
-            messagingStore.on(WidgetMessagingStoreEvent.StoreMessaging, onStoreMessaging);
 
-            // Race both of the above recheck signals against a timeout.
-            const timeout = setTimeout(
-                () => recheck.reject(new Error(`Widget for call in ${this.roomId} not started; timed out`)),
-                TIMEOUT_MS - (performance.now() - startTime),
-            );
+                // Race the above recheck signals against a timeout.
+                const timeout = setTimeout(
+                    () => recheck.reject(new Error(`Widget for call in ${this.roomId} not started; timed out`)),
+                    remainingTime,
+                );
 
-            try {
-                await recheck.promise;
-            } finally {
-                currentMessaging?.off(WidgetMessagingEvent.Start, onStart);
-                messagingStore.off(WidgetMessagingStoreEvent.StoreMessaging, onStoreMessaging);
-                clearTimeout(timeout);
+                try {
+                    await recheck.promise;
+                } finally {
+                    currentMessaging?.off(WidgetMessagingEvent.Start, onStart);
+                    currentMessaging?.off(WidgetMessagingEvent.Stop, onStop);
+                    messagingStore.off(WidgetMessagingStoreEvent.StoreMessaging, onStoreMessaging);
+                    messagingStore.off(WidgetMessagingStoreEvent.StopMessaging, onStopMessaging);
+                    clearTimeout(timeout);
+                }
             }
-        }
 
-        logger.debug(`Widget ${this.widgetUid} now ready`);
-        return (this.widgetApi = messaging.widgetApi);
+            logger.debug(`Widget ${this.widgetUid} now ready`);
+            return (this.widgetApi = messaging.widgetApi);
+        })();
+
+        try {
+            return await this.startPromise;
+        } finally {
+            this.startPromise = null;
+        }
     }
 
     protected setConnected(): void {
@@ -302,6 +333,7 @@ export abstract class Call extends TypedEventEmitter<CallEvent, CallEventHandler
      */
     protected close(): void {
         this.widgetApi = null;
+        this.startPromise = null;
         this.emit(CallEvent.Close);
     }
 
@@ -309,6 +341,7 @@ export abstract class Call extends TypedEventEmitter<CallEvent, CallEventHandler
      * Stops all internal timers and tasks to prepare for garbage collection.
      */
     public destroy(): void {
+        this.startPromise = null;
         if (this.connected) {
             this.setDisconnected();
             this.close();
@@ -484,6 +517,11 @@ export class JitsiCall extends Call {
 
     public async start(): Promise<ClientWidgetApi> {
         const widgetApi = await super.start();
+        widgetApi.off(`action:${ElementWidgetActions.JoinCall}`, this.onJoin);
+        widgetApi.off(`action:${ElementWidgetActions.HangupCall}`, this.onHangup);
+        ActiveWidgetStore.instance.off(ActiveWidgetStoreEvent.Dock, this.onDock);
+        ActiveWidgetStore.instance.off(ActiveWidgetStoreEvent.Undock, this.onUndock);
+
         widgetApi.on(`action:${ElementWidgetActions.JoinCall}`, this.onJoin);
         widgetApi.on(`action:${ElementWidgetActions.HangupCall}`, this.onHangup);
         ActiveWidgetStore.instance.on(ActiveWidgetStoreEvent.Dock, this.onDock);
@@ -510,8 +548,8 @@ export class JitsiCall extends Call {
     }
 
     public close(): void {
-        this.widgetApi!.off(`action:${ElementWidgetActions.JoinCall}`, this.onJoin);
-        this.widgetApi!.off(`action:${ElementWidgetActions.HangupCall}`, this.onHangup);
+        this.widgetApi?.off(`action:${ElementWidgetActions.JoinCall}`, this.onJoin);
+        this.widgetApi?.off(`action:${ElementWidgetActions.HangupCall}`, this.onHangup);
         ActiveWidgetStore.instance.off(ActiveWidgetStoreEvent.Dock, this.onDock);
         ActiveWidgetStore.instance.off(ActiveWidgetStoreEvent.Undock, this.onUndock);
         super.close();
@@ -894,12 +932,20 @@ export class ElementCall extends Call {
         // Some parameters may only be set once the user has chosen to interact with the call, regenerate the URL
         // at this point in case any of the parameters have changed.
         this.widgetGenerationParameters = { ...this.widgetGenerationParameters, ...widgetGenerationParameters };
-        this.widget.url = ElementCall.generateWidgetUrl(
+        const newUrl = ElementCall.generateWidgetUrl(
             this.client,
             this.roomId,
             this.widgetGenerationParameters,
         ).toString();
+        if (this.widget.url !== newUrl) {
+            this.widget.url = newUrl;
+        }
         const widgetApi = await super.start();
+        widgetApi.off(`action:${ElementWidgetActions.JoinCall}`, this.onJoin);
+        widgetApi.off(`action:${ElementWidgetActions.HangupCall}`, this.onHangup);
+        widgetApi.off(`action:${ElementWidgetActions.Close}`, this.onClose);
+        widgetApi.off(`action:${ElementWidgetActions.DeviceMute}`, this.onDeviceMute);
+
         widgetApi.on(`action:${ElementWidgetActions.JoinCall}`, this.onJoin);
         widgetApi.on(`action:${ElementWidgetActions.HangupCall}`, this.onHangup);
         widgetApi.on(`action:${ElementWidgetActions.Close}`, this.onClose);
@@ -926,10 +972,10 @@ export class ElementCall extends Call {
     }
 
     public close(): void {
-        this.widgetApi!.off(`action:${ElementWidgetActions.JoinCall}`, this.onJoin);
-        this.widgetApi!.off(`action:${ElementWidgetActions.HangupCall}`, this.onHangup);
-        this.widgetApi!.off(`action:${ElementWidgetActions.Close}`, this.onClose);
-        this.widgetApi!.off(`action:${ElementWidgetActions.DeviceMute}`, this.onDeviceMute);
+        this.widgetApi?.off(`action:${ElementWidgetActions.JoinCall}`, this.onJoin);
+        this.widgetApi?.off(`action:${ElementWidgetActions.HangupCall}`, this.onHangup);
+        this.widgetApi?.off(`action:${ElementWidgetActions.Close}`, this.onClose);
+        this.widgetApi?.off(`action:${ElementWidgetActions.DeviceMute}`, this.onDeviceMute);
         super.close();
     }
 

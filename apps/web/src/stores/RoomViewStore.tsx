@@ -381,7 +381,9 @@ export class RoomViewStore extends EventEmitter {
                 // Immediately start the call. This will connect to all required widget events
                 // and allow the widget to show the lobby.
                 if (call.connectionState === ConnectionState.Disconnected) {
-                    call.start({ skipLobby: payload.skipLobby, voiceOnly: payload.voiceOnly });
+                    call.start({ skipLobby: payload.skipLobby, voiceOnly: payload.voiceOnly }).catch((e) => {
+                        logger.error(`Failed to start call in room ${payload.room_id}:`, e);
+                    });
                 }
             }
             // If we switch to a different room from the call, we are no longer presenting it

@@ -436,14 +436,24 @@ export default class AppTile extends React.Component<IProps, IState> {
     private setupMessagingListeners(): void {
         this.messaging?.on(WidgetMessagingEvent.Start, this.onMessagingStart);
         this.messaging?.on(WidgetMessagingEvent.Stop, this.onMessagingStop);
+        if (this.messaging?.widgetApi) {
+            this.onMessagingStart(this.messaging.widgetApi);
+        }
     }
 
     private stopMessagingListeners(): void {
         this.messaging?.off(WidgetMessagingEvent.Start, this.onMessagingStart);
         this.messaging?.off(WidgetMessagingEvent.Stop, this.onMessagingStop);
+        if (this.messaging?.widgetApi) {
+            this.onMessagingStop(this.messaging.widgetApi);
+        }
     }
 
     private readonly onMessagingStart = (widgetApi: ClientWidgetApi): void => {
+        widgetApi.off("ready", this.onWidgetReady);
+        widgetApi.off("error:preparing", this.updateRequiresClient);
+        widgetApi.off("capabilitiesNotified", this.updateRequiresClient);
+
         widgetApi.on("ready", this.onWidgetReady);
         widgetApi.on("error:preparing", this.updateRequiresClient);
         // emits when the capabilities have been set up or changed
