@@ -369,17 +369,13 @@ export default class CreateRoomDialog extends React.Component<IProps, IState> {
 
         let e2eeSection: JSX.Element | undefined;
         if (this.state.joinRule !== JoinRule.Public && !shouldForceDisableEncryption(MatrixClientPeg.safeGet())) {
-            let microcopy: string;
-            if (privateShouldBeEncrypted(MatrixClientPeg.safeGet())) {
-                if (this.state.canChangeEncryption) {
-                    microcopy = isVideoRoom
-                        ? _t("create_room|encrypted_video_room_warning")
-                        : _t("create_room|encrypted_warning");
-                } else {
-                    microcopy = _t("create_room|encryption_forced");
-                }
-            } else {
-                microcopy = _t("settings|security|e2ee_default_disabled_warning");
+            let microcopy: string | undefined;
+            if (!this.state.canChangeEncryption) {
+                microcopy = _t("create_room|encryption_forced");
+            } else if (this.state.isEncrypted) {
+                microcopy = isVideoRoom
+                    ? _t("create_room|encrypted_video_room_warning")
+                    : _t("create_room|encrypted_warning");
             }
             e2eeSection = (
                 <SettingsToggleInput
@@ -479,14 +475,14 @@ export default class CreateRoomDialog extends React.Component<IProps, IState> {
                         </div>
 
                         {visibilitySection}
-                        {e2eeSection}
-                        {e2eeStateSection}
                         {aliasField}
                         {this.advancedSettingsEnabled && (
                             <details onToggle={this.onDetailsToggled} className="mx_CreateRoomDialog_details">
                                 <summary className="mx_CreateRoomDialog_details_summary">
                                     {this.state.detailsOpen ? _t("action|hide_advanced") : _t("action|show_advanced")}
                                 </summary>
+                                {e2eeSection}
+                                {e2eeStateSection}
                                 <SettingsToggleInput
                                     name="unfederated"
                                     label={_t("create_room|unfederated", {
